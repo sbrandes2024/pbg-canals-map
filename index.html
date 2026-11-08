@@ -9,8 +9,24 @@ html,body{margin:0;height:100%;-webkit-text-size-adjust:100%;font-family:-apple-
 #map{position:absolute;inset:0}
 .hdr{position:absolute;top:calc(10px + env(safe-area-inset-top));left:56px;right:60px;max-width:520px;z-index:1000;background:rgba(255,255,255,.95);border-radius:12px;padding:8px 12px;box-shadow:0 2px 10px rgba(0,0,0,.25);font-size:14px}
 .hdr b{font-size:16px}.hdr .btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.hdr button{border:0;background:#0a5bd8;color:#fff;border-radius:8px;padding:8px 10px;font-size:14px;min-height:36px}.hdr button.alt{background:#eef3fb;color:#0a5bd8}
+
+.srch{position:relative;margin-top:6px}.srow{display:flex;gap:6px}
+#q{flex:1;min-width:0;font-size:16px;height:44px;box-sizing:border-box;padding:0 12px;border:2px solid #0a5bd8;border-radius:10px;background:#fff;-webkit-appearance:none;appearance:none}
+.srow button{min-width:44px;height:44px;padding:0 12px;font-size:15px}
+#res{display:none;position:absolute;left:0;right:0;top:50px;z-index:1003;background:#fff;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.35);max-height:50vh;overflow:auto;margin:0;padding:0;list-style:none}
+#res li{padding:12px;font-size:15px;border-bottom:1px solid #eee;cursor:pointer}#res li:last-child{border-bottom:0}#res li.msg{color:#666;cursor:default}
+#res li:active,#res li.sel{background:#eef3fb}
+#sstat{font-size:12px;color:#666;margin-top:3px;min-height:0}
+.sugg{margin:8px 0;font-size:14px}.sbtn{display:inline-block;margin-top:6px;background:#1a7f37;color:#fff;text-decoration:none;border-radius:8px;padding:9px 14px;font-size:14px}
+.credit a{color:#0a5bd8}
+.hdr .tog{position:absolute;top:6px;right:6px;width:34px;height:34px;min-height:0;padding:0;border-radius:50%;background:#eef3fb;color:#0a5bd8;font-size:22px;line-height:34px}
+.hdr .ttl{padding-right:36px}
+.hdr .pill{display:none;align-items:center;gap:10px;padding-right:40px}
+.hdr .pill button{background:#0a5bd8;color:#fff;border-radius:999px;padding:6px 14px;min-height:34px;font-size:14px;font-weight:600}
+.hdr .pill a{font-size:13px;color:#0a5bd8}
+.hdr.min{padding:6px 8px}.hdr.min .full{display:none}.hdr.min .pill{display:flex}
 .credit{margin-top:6px;font-size:13px;color:#333}.credit b{font-size:13px}
-#disc{position:absolute;left:10px;right:10px;bottom:calc(24px + env(safe-area-inset-bottom));max-height:55%;overflow:auto;z-index:1002;background:#fffdf5;border:2px solid #e0b000;border-radius:14px;padding:12px 14px;box-shadow:0 4px 20px rgba(0,0,0,.35);font-size:14px;line-height:1.45;max-width:560px}
+#disc{position:absolute;left:10px;right:10px;bottom:calc(24px + env(safe-area-inset-bottom));max-height:45%;overflow:auto;z-index:1002;background:#fffdf5;border:2px solid #e0b000;border-radius:14px;padding:12px 14px;box-shadow:0 4px 20px rgba(0,0,0,.35);font-size:14px;line-height:1.45;max-width:560px}
 #disc h3{margin:0 0 6px;font-size:16px}#disc .hide{float:right;border:0;background:#0a5bd8;color:#fff;border-radius:8px;padding:6px 12px;font-size:14px}
 #disc ul{padding-left:18px;margin:6px 0}#disc .small{color:#555;font-size:13px}
 .lgbtn{border:0;background:rgba(255,255,255,.95);border-radius:10px;padding:8px 10px;font-size:14px;box-shadow:0 1px 6px rgba(0,0,0,.3)}
@@ -22,9 +38,10 @@ html,body{margin:0;height:100%;-webkit-text-size-adjust:100%;font-family:-apple-
 .lbl:before{display:none}
 .leaflet-control-layers{font-size:14px}
 </style></head><body><div id="map"></div>
-<div class="hdr"><b>Palm Beach Gardens canals and lakes</b><br><span style="color:#555">Tap any canal, lake or marker for details</span>
+<div class="hdr" id="hdr"><button class="tog" id="tog" aria-label="Minimize header" aria-expanded="true" title="Minimize">&#8722;</button><div class="full ttl"><b>Palm Beach Gardens canals and lakes</b></div><div class="pill"><button id="pillbtn" aria-label="Expand header">PBG canals <span aria-hidden="true">&#9662;</span></button><a href="https://github.com/sbrandes2024/pbg-canals-map/issues/new?title=Suggestion&amp;labels=suggestion" target="_blank" rel="noopener">Suggest</a></div><div class="srch" id="srch"><form class="srow" id="sform" role="search" autocomplete="off"><input id="q" type="search" inputmode="search" enterkeyhint="search" placeholder="Address or place" aria-label="Search an address or place" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"><button type="submit" aria-label="Search">Go</button><button type="button" id="loc" class="alt" aria-label="Use my location" title="Use my location">&#9737;</button></form><ul id="res" role="listbox"></ul><div id="sstat"></div></div>
+<div class="full"><span style="color:#555;font-size:13px">Tap any canal, lake or marker for details</span>
 <div class="btns"><button onclick="show('info')">How the water reaches the ocean</button><button class="alt" onclick="show('disc')">Disclaimer and sources</button></div>
-<div class="credit">A project by <b>Steve Brandes</b></div></div>
+<div class="credit">A project by <b>Steve Brandes</b> &middot; <a href="https://github.com/sbrandes2024/pbg-canals-map/issues/new?title=Suggestion&amp;labels=suggestion" target="_blank" rel="noopener">Send a suggestion</a></div></div></div>
 <div id="info"><button class="x" onclick="info.style.display='none'">&times;</button><h3>Main drainage routes</h3>
 <p><b>1. Neighborhood lakes.</b> Many lakes and ponds in Palm Beach Gardens neighborhoods are stormwater lakes. They are linked by underground pipes, culverts and small canals, many run by the Northern Palm Beach County Improvement District (NPBCID, shaded purple, toggle it on). Those underground pipes are not on this map, so it cannot tell you which outlet a particular lake uses.</p>
 <p><b>2. C-17 (Earman River Canal) and S-44.</b> The official SFWMD GIS shows the C-17 canal draining east through the S-44 control structure to the Lake Worth Lagoon, which is part of the Intracoastal Waterway near North Palm Beach. From there water reaches the ocean through the Lake Worth (Palm Beach) Inlet.</p>
@@ -37,6 +54,7 @@ html,body{margin:0;height:100%;-webkit-text-size-adjust:100%;font-family:-apple-
 <p style="color:#666;font-size:13px">Which route a given lake uses depends on its local district permit and pipes. Confirm with NPBCID (npbcid.org) or the city before relying on it.<br><br>Sources: SFWMD Water Management System GIS (canals, structures, special districts); Palm Beach County Engineering water bodies and municipal boundaries. Basemaps: Esri World Imagery, OpenStreetMap.</p></div>
 <div id="disc"><button class="hide" onclick="hide('disc')">Hide</button><h3>About this map</h3>
 <div>A project by <b>Steve Brandes</b></div>
+<p class="sugg">Have a suggestion or spot something wrong? Please let us know!<br><a class="sbtn" href="https://github.com/sbrandes2024/pbg-canals-map/issues/new?title=Suggestion&amp;labels=suggestion" target="_blank" rel="noopener">Send a suggestion</a></p>
 <p><b>Disclaimer.</b> This map uses the most recent publicly available data we could find from the listed sources. Some records may be outdated, and waterways, structures, and drainage connections may have changed since they were mapped. Connections may be incomplete or unverified. For general reference only, not for navigation, flood risk assessment, or engineering decisions.</p>
 <p class="small"><b>Known gaps:</b> underground pipe connections are missing, the county water body data is several years old, and the route labels were placed by hand.</p>
 <p class="small"><b>Data dates:</b></p><ul class="small">
@@ -80,4 +98,52 @@ function hide(id){document.getElementById(id).style.display='none'}
 show('disc');
 map.on('popupopen',()=>{hide('info');hide('disc')});
 map.attributionControl.addAttribution('A project by Steve Brandes');
+
+/* Header minimize, remembered in localStorage */
+const hdrEl=document.getElementById('hdr'),tog=document.getElementById('tog');
+function setMin(m){hdrEl.classList.toggle('min',m);tog.innerHTML=m?'&#9662;':'&#8722;';tog.setAttribute('aria-label',m?'Expand header':'Minimize header');tog.title=m?'Expand':'Minimize';tog.setAttribute('aria-expanded',String(!m));try{localStorage.setItem('pbgHdrMin',m?'1':'0')}catch(e){}}
+tog.onclick=()=>setMin(!hdrEl.classList.contains('min'));
+document.getElementById('pillbtn').onclick=()=>setMin(false);
+try{setMin(localStorage.getItem('pbgHdrMin')==='1')}catch(e){}
+/* Address search: Esri World Geocoding first, Nominatim fallback */
+const ESRI='https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/';
+const PBC={loc:'-80.10,26.80',ext:'-80.89,26.32,-80.03,26.98',vb:'-80.89,26.98,-80.03,26.32'};
+const q=document.getElementById('q'),res=document.getElementById('res'),sstat=document.getElementById('sstat');
+let deb=null,seq=0,hit=null,lastNom=0,attrE=false,attrN=false;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function attr(kind){if(kind==='esri'&&!attrE){map.attributionControl.addAttribution('Geocoding by Esri');attrE=true}
+ if(kind==='osm'&&!attrN){map.attributionControl.addAttribution('Search by <a href="https://nominatim.openstreetmap.org/" target="_blank" rel="noopener">Nominatim</a>, data &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>');attrN=true}}
+function list(items,msg){res.innerHTML='';if(msg){res.innerHTML='<li class="msg">'+esc(msg)+'</li>'}
+ items.forEach(it=>{const li=document.createElement('li');li.setAttribute('role','option');li.textContent=it.label;li.onclick=()=>pick(it);res.appendChild(li)});
+ res.style.display=(items.length||msg)?'block':'none'}
+async function getJSON(u){const r=await fetch(u);if(!r.ok)throw new Error(r.status);const j=await r.json();if(j.error)throw new Error(j.error.message||'error');return j}
+async function esriSuggest(text){const p=new URLSearchParams({text,location:PBC.loc,searchExtent:PBC.ext,countryCode:'USA',maxSuggestions:6,f:'json'});
+ const j=await getJSON(ESRI+'suggest?'+p);return (j.suggestions||[]).filter(s=>!s.isCollection).map(s=>({label:s.text,magicKey:s.magicKey,src:'esri'}))}
+async function esriFind(text,magicKey){const p=new URLSearchParams({SingleLine:text,location:PBC.loc,searchExtent:PBC.ext,countryCode:'USA',maxLocations:6,outFields:'Match_addr,Addr_type',f:'json'});if(magicKey)p.set('magicKey',magicKey);
+ const j=await getJSON(ESRI+'findAddressCandidates?'+p);return (j.candidates||[]).filter(c=>c.score>=80).map(c=>({label:c.address,lat:c.location.y,lon:c.location.x,src:'esri'}))}
+async function nominatim(text){const wait=1100-(Date.now()-lastNom);if(wait>0)await new Promise(r=>setTimeout(r,wait));lastNom=Date.now();
+ const p=new URLSearchParams({q:text,format:'jsonv2',limit:5,countrycodes:'us',viewbox:PBC.vb,bounded:0});
+ const j=await getJSON('https://nominatim.openstreetmap.org/search?'+p);attr('osm');return j.map(r=>({label:r.display_name,lat:+r.lat,lon:+r.lon,src:'osm'}))}
+function show1(it){res.style.display='none';q.value=it.label;q.blur();hide('disc');hide('info');attr(it.src);
+ if(hit)map.removeLayer(hit);hit=L.marker([it.lat,it.lon],{title:it.label}).addTo(map).bindPopup('<b>'+esc(it.label)+'</b>');
+ map.setView([it.lat,it.lon],17);sstat.textContent='';window.lastSearch=it}
+async function pick(it){if(it.lat!=null)return show1(it);sstat.textContent='Finding it...';
+ try{const c=await esriFind(it.label,it.magicKey);if(c.length)return show1(c[0])}catch(e){}
+ try{const n=await nominatim(it.label);if(n.length)return show1(n[0])}catch(e){}
+ sstat.textContent='Sorry, that place could not be found.'}
+q.addEventListener('input',()=>{clearTimeout(deb);const v=q.value.trim();if(v.length<3){list([]);sstat.textContent='';return}
+ deb=setTimeout(async()=>{const my=++seq;try{const s=await esriSuggest(v);if(my!==seq)return;attr('esri');list(s,s.length?null:'No matches yet. Press Go to search.')}catch(e){if(my===seq)list([],'Press Go to search.')}},350)});
+document.getElementById('sform').addEventListener('submit',async ev=>{ev.preventDefault();clearTimeout(deb);const v=q.value.trim();if(!v)return;const my=++seq;sstat.textContent='Searching...';let c=[];
+ try{c=await esriFind(v)}catch(e){}
+ if(!c.length){try{c=await nominatim(v)}catch(e){}}
+ if(my!==seq)return;sstat.textContent='';
+ if(!c.length)return list([],'Sorry, no results. Try adding the city, for example Palm Beach Gardens, FL.');
+ if(c.length===1||c[0].src==='esri')return show1(c[0]);list(c)});
+document.addEventListener('click',e=>{if(!document.getElementById('srch').contains(e.target))res.style.display='none'});
+const locb=document.getElementById('loc');
+if(!navigator.geolocation)locb.style.display='none';
+locb.onclick=()=>{sstat.textContent='Finding your location...';map.locate({setView:true,maxZoom:17,enableHighAccuracy:true,timeout:15000})};
+map.on('locationfound',e=>{sstat.textContent='';hide('disc');if(hit)map.removeLayer(hit);hit=L.circleMarker(e.latlng,{radius:9,color:'#fff',weight:3,fillColor:'#0a84ff',fillOpacity:1}).addTo(map).bindPopup('You are here (accurate to about '+Math.round(e.accuracy)+' m)')});
+map.on('locationerror',()=>{sstat.textContent='Location is not available. Check that location access is allowed for this page.'});
+
 </script></body></html>
