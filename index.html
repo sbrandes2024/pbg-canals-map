@@ -7,7 +7,7 @@
 <style>
 html,body{margin:0;height:100%;-webkit-text-size-adjust:100%;font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif}
 #map{position:absolute;inset:0}
-.hdr{position:absolute;top:calc(8px + env(safe-area-inset-top));left:8px;right:8px;max-width:560px;margin:0 auto;z-index:1250;box-sizing:border-box;background:rgba(255,255,255,.95);border-radius:12px;padding:8px 12px;box-shadow:0 2px 10px rgba(0,0,0,.25);font-size:14px}
+.hdr{position:absolute;top:calc(8px + env(safe-area-inset-top));left:8px;right:8px;max-width:560px;margin:0 auto;z-index:1250;box-sizing:border-box;background:#fff;border-radius:12px;padding:8px 12px;box-shadow:0 2px 10px rgba(0,0,0,.25);font-size:14px}
 .hdr b{font-size:16px}.hdr .btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.hdr button{border:0;background:#0a5bd8;color:#fff;border-radius:8px;padding:8px 10px;font-size:14px;min-height:36px}.hdr button.alt{background:#eef3fb;color:#0a5bd8}
 
 .srch{position:relative;margin-top:6px}.srow{display:flex;gap:6px}
@@ -24,7 +24,7 @@ html,body{margin:0;height:100%;-webkit-text-size-adjust:100%;font-family:-apple-
 .sugg{margin:8px 0;font-size:14px}.sbtn{display:inline-block;margin-top:6px;background:#1a7f37;color:#fff;text-decoration:none;border-radius:8px;padding:9px 14px;font-size:14px}
 .credit a{color:#0a5bd8}
 .hdr .tog{position:absolute;top:6px;right:6px;width:34px;height:34px;min-height:0;padding:0;border-radius:50%;background:#eef3fb;color:#0a5bd8;font-size:22px;line-height:34px}
-.hdr .ttl{padding-right:36px}
+.hdr .ttl{padding-right:40px;min-height:34px;display:flex;align-items:center}
 .hdr .pill{display:none;align-items:center;gap:10px;padding-right:40px}
 .hdr .pill button{background:#0a5bd8;color:#fff;border-radius:999px;padding:6px 14px;min-height:34px;font-size:14px;font-weight:600}
 .hdr .pill a{font-size:13px;color:#0a5bd8}.hdr .pill button.pt{background:#0b8a4a;font-size:13px;padding:6px 10px}.hdr .pill button.pt.on{background:#ffd400;color:#000}
@@ -43,8 +43,12 @@ html,body{margin:0;height:100%;-webkit-text-size-adjust:100%;font-family:-apple-
 .hdr button#trace{background:#0b8a4a}.hdr button#trace.on{background:#ffd400;color:#000;box-shadow:0 0 0 3px #000 inset}
 .flowanim{stroke-dasharray:14 10;animation:flow 1.1s linear infinite}@keyframes flow{to{stroke-dashoffset:-24}}
 .credit{margin-top:6px;font-size:13px;color:#333}.credit b{font-size:13px}
-#disc{position:absolute;left:10px;right:10px;bottom:calc(24px + env(safe-area-inset-bottom));max-height:45%;overflow:auto;z-index:1200;background:#fffdf5;border:2px solid #e0b000;border-radius:14px;padding:12px 14px;box-shadow:0 4px 20px rgba(0,0,0,.35);font-size:14px;line-height:1.45;max-width:560px}
-#disc h3{margin:0 0 6px;font-size:16px}#disc .hide{float:right;border:0;background:#0a5bd8;color:#fff;border-radius:8px;padding:6px 12px;font-size:14px}
+#mback{display:none;position:fixed;inset:0;z-index:1300;background:rgba(10,20,35,.55)}body.modal #mback{display:block}
+#disc{display:none;position:fixed;z-index:1310;left:12px;right:12px;top:calc(12px + env(safe-area-inset-top));bottom:auto;max-width:560px;margin:0 auto;max-height:calc(100% - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));max-height:calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));box-sizing:border-box;flex-direction:column;overflow:hidden;background:#fffdf5;border:2px solid #e0b000;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.45);font-size:14px;line-height:1.45}
+#disc .dhead{flex:none;display:flex;align-items:center;gap:8px;padding:8px 8px 8px 14px;border-bottom:1px solid #f0dc9a;background:#fffdf5}#disc .dhead h3{flex:1;margin:0}#disc .dhead .x{flex:none;width:44px;height:44px;border:0;border-radius:50%;background:#eef3fb;color:#0a5bd8;font-size:26px;line-height:44px;padding:0}
+#disc .dhead .x:focus{outline:none}#disc .dhead .x:focus-visible{outline:3px solid #0a5bd8;outline-offset:2px}
+#disc .dbody{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:10px 14px 14px}#disc .close2{display:block;width:100%;margin-top:10px;border:0;background:#0a5bd8;color:#fff;border-radius:10px;padding:12px;font-size:15px;font-weight:600}
+#disc h3{margin:0;font-size:17px}
 #disc ul{padding-left:18px;margin:6px 0}#disc .small{color:#555;font-size:13px}
 .opbox{border-top:1px solid #ddd;margin-top:6px;padding:8px 2px 4px;font-size:13px}.leaflet-control-layers .opbox input#wop{width:100%;height:28px;margin:6px 0 0;touch-action:pan-x;accent-color:#0a5bd8;vertical-align:middle}.opk{display:flex;justify-content:space-between;color:#666;font-size:11px}
 .lgbtn{border:0;background:rgba(255,255,255,.95);border-radius:10px;padding:8px 10px;font-size:14px;box-shadow:0 1px 6px rgba(0,0,0,.3)}
@@ -79,15 +83,14 @@ html,body{margin:0;height:100%;-webkit-text-size-adjust:100%;font-family:-apple-
 <li>The route labels on the map (for example "C-17 Earman River &rarr; Intracoastal") were placed by hand as a guide. They are not official GIS features.</li></ul>
 <p style="color:#666;font-size:13px">Which route a given lake uses depends on its local district permit and pipes. Confirm with NPBCID (npbcid.org) or the city before relying on it.<br><br>Sources: SFWMD Water Management System GIS (canals, structures, special districts); Palm Beach County Engineering water bodies and municipal boundaries. Basemaps: Esri World Imagery, OpenStreetMap.</p></div>
 <div id="route"></div>
-<div id="disc"><button class="hide" onclick="hide('disc')">Hide</button><h3>About this map</h3>
-<div>A project by <b>Steve Brandes</b></div>
+<div id="mback" onclick="hide('disc')"></div><div id="disc" role="dialog" aria-modal="true" aria-labelledby="discT"><div class="dhead"><h3 id="discT">About this map</h3><button class="x" type="button" onclick="hide('disc')" aria-label="Close">&times;</button></div><div class="dbody"><div>A project by <b>Steve Brandes</b></div>
 <p class="sugg">Have a suggestion or spot something wrong? Please let us know!<br><a class="sbtn" href="https://github.com/sbrandes2024/pbg-canals-map/issues/new?title=Suggestion&amp;labels=suggestion" target="_blank" rel="noopener">Send a suggestion</a></p>
 <p><b>Disclaimer.</b> This map uses the most recent publicly available data we could find from the listed sources. Some records may be outdated, and waterways, structures, and drainage connections may have changed since they were mapped. Connections may be incomplete or unverified. For general reference only, not for navigation, flood risk assessment, or engineering decisions.</p>
 <p class="small"><b>Path to the ocean routes are estimates.</b> They follow official USGS flowlines where they exist, and any hop from a lake to a canal is assumed because underground pipes are not mapped.</p>
 <p class="small"><b>Known gaps:</b> underground pipe connections are missing, the county water body data is several years old, and the route labels were placed by hand.</p>
 <p class="small"><b>Sources and data dates</b> (loaded live from each agency for the area you searched):</p><ul class="small" id="srcs"></ul>
 <p class="small">Palm Beach Gardens explainer and route labels were written by hand for the default area. Data is cached on this device for up to 3 days.</p>
-<p class="small"><b>Sources:</b> SFWMD, SJRWMD, SWFWMD and NWFWMD GIS services; Florida DEP NHD (USGS National Hydrography Dataset); Palm Beach County Engineering water bodies and municipal boundaries. Suwannee River WMD has no public service that answered, so the statewide NHD covers that area. Basemaps: Esri World Imagery, Esri reference labels, OpenStreetMap. Routing: USGS NLDI.</p></div>
+<p class="small"><b>Sources:</b> SFWMD, SJRWMD, SWFWMD and NWFWMD GIS services; Florida DEP NHD (USGS National Hydrography Dataset); Palm Beach County Engineering water bodies and municipal boundaries. Suwannee River WMD has no public service that answered, so the statewide NHD covers that area. Basemaps: Esri World Imagery, Esri reference labels, OpenStreetMap. Routing: USGS NLDI.</p><button class="close2" type="button" onclick="hide('disc')">Close</button></div></div>
 <script>
 const map=L.map('map',{zoomControl:false,preferCanvas:false}).setView([26.86,-80.12],11);
 const sat=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Esri World Imagery'});
@@ -199,7 +202,7 @@ const status=document.getElementById('lstat');
 function renderStatus(){const v=Object.values(S);const busy=v.filter(x=>x.state==='loading').length,err=SRC.filter(s=>S[s.id].state==='error'),done=v.filter(x=>x.state==='ok'||x.state==='none').length;
  status.innerHTML=busy?'<span class="spin"></span> Loading water data within '+radiusMi+' miles of '+esc(centerLabel)+' ('+done+' of '+SRC.length+' sources)':
   ('Showing water data within '+radiusMi+' miles of '+esc(centerLabel)+(err.length?'. <a href="#" onclick="show(\'disc\');return false">'+err.length+' source'+(err.length>1?'s':'')+' unavailable</a>.':'.'));
- const t=document.getElementById('srcs');if(t)t.innerHTML=SRC.map(s=>{const x=S[s.id];return '<li><b>'+esc(s.label)+'</b> ('+esc(s.agency)+'): '+(x.state==='ok'?x.n+' features loaded':x.state==='none'?'none in this area':x.state==='error'?'<span class="err">unavailable: '+esc(x.msg)+'</span>':x.state==='skip'?'not used here':x.state==='loading'?'loading':'waiting')+(s.date?'. Data date: '+esc(s.date):'')+(x.edit?'. Last edit reported by the service: '+esc(x.edit):'')+'</li>'}).join('')}
+ const t=document.getElementById('srcs');if(t)t.innerHTML=SRC.map(s=>{const x=S[s.id];return '<li><b>'+esc(s.label)+'</b> ('+esc(s.agency)+'): '+(x.state==='ok'?x.n+(x.n===1?' feature':' features')+' loaded':x.state==='none'?'none in this area':x.state==='error'?'<span class="err">unavailable: '+esc(x.msg)+'</span>':x.state==='skip'?'not used here':x.state==='loading'?'loading':'waiting')+(s.date?'. Data date: '+esc(s.date):'')+(x.edit?'. Last edit reported by the service: '+esc(x.edit):'')+'</li>'}).join('')}
 async function liveEdit(s){if(!s.live||S[s.id].edit)return;try{const j=await cget(s.url+'?f=json');const d=j.editingInfo&&(j.editingInfo.dataLastEditDate||j.editingInfo.lastEditDate);if(d)S[s.id].edit=new Date(d).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric',timeZone:'UTC'})}catch(e){}}
 const offFor=r=>r<=10?.00006:r<=20?.0001:.00016;
 async function loadArea(){const seq=++loadSeq;clearData();ring.clearLayers();
@@ -252,9 +255,11 @@ layersCtl.addTo(map);
  r.addEventListener('input',()=>{wOp=1-(+r.value)/100;sh();applyOpacity();try{localStorage.setItem('pbgWaterOp',String(wOp))}catch(e){}})})();
 const lg=L.control({position:'bottomleft'});lg.onAdd=()=>{const w=L.DomUtil.create('div');L.DomEvent.disableClickPropagation(w);const b=L.DomUtil.create('button','lgbtn',w);const d=L.DomUtil.create('div','lg',w);const set=o=>{d.style.display=o?'block':'none';b.textContent=o?'Hide legend':'Show legend'};set(innerWidth>600);b.onclick=()=>set(d.style.display==='none');d.innerHTML='<b>Waterway size</b><br><i class="sw"><s style="height:6px;background:#ff2d2d"></s></i>Major canal<br><i class="sw"><s style="height:3.5px;background:#ffc400"></s></i>Secondary canal<br><i class="sw"><s style="height:1.6px;background:#9befff;opacity:.85"></s></i>Small canal or ditch<br><i class="sw" style="background:#38d9c9;border:1px solid #fff;outline:1px solid #888"></i>Lake or pond<br><i class="sw" style="background:#0050ff"></i>Intracoastal or ocean<br><i class="sw"><s style="height:0;border-top:3px dashed #fff"></s></i>City limit<br><i class="sw"><s style="height:0;border-top:2px dashed #fff"></s></i>Search radius<br><span style="color:#ff9500;font-size:15px">&#9679;</span> Control structure<br><span style="color:#666;font-size:11px">Line size comes from the official owner and drainage order fields.</span>';return w};lg.addTo(map);
 L.control.scale().addTo(map);
-function show(id){['info','disc','route'].forEach(k=>document.getElementById(k).style.display=k===id?'block':'none')}
-function hide(id){document.getElementById(id).style.display='none'}
-show('disc');
+function show(id){['info','disc','route'].forEach(k=>document.getElementById(k).style.display=k===id?(k==='disc'?'flex':'block'):'none');document.body.classList.toggle('modal',id==='disc');if(id==='disc')setTimeout(()=>{const x=document.querySelector('#disc .x');x&&x.focus({preventScroll:true})},0)}
+function hide(id){document.getElementById(id).style.display='none';if(id==='disc'){document.body.classList.remove('modal');try{localStorage.setItem('pbgWelcomed','1')}catch(e){}}}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('modal'))hide('disc')});
+/* welcome card: opens by itself on the first visit only; the Disclaimer and sources button opens it any time */
+try{if(!localStorage.getItem('pbgWelcomed'))show('disc')}catch(e){show('disc')}
 map.on('popupopen',e=>{if(traceOn){map.closePopup();return}hide('info');hide('disc')});
 /* Path to the ocean: snap a tap to water, then follow USGS NLDI downstream main (NHDPlus V2 flowlines) */
 const NLDI='https://api.water.usgs.gov/nldi/linked-data/comid/';
