@@ -1,7 +1,7 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="author" content="Steve Brandes">
 <meta name="description" content="Interactive map of Palm Beach Gardens canals, lakes and drainage routes. A project by Steve Brandes.">
-<title>Palm Beach Gardens Canals and Lakes Map</title>
+<title>Canals, Rivers and Lakes Map (starts at Palm Beach Gardens)</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -68,8 +68,8 @@ html,body{margin:0;height:100%;-webkit-text-size-adjust:100%;font-family:-apple-
 .leaflet-control-attribution{font-size:10px;line-height:1.3;max-width:100vw}
 @media (max-width:600px){.leaflet-bottom.leaflet-left{bottom:30px}.leaflet-bottom.leaflet-right{bottom:30px}.leaflet-bottom.leaflet-right .leaflet-control-attribution{position:fixed;right:0;bottom:0;left:0;margin:0!important;text-align:right}}
 </style></head><body><div id="map"></div>
-<div class="hdr" id="hdr"><button class="tog" id="tog" aria-label="Minimize header" aria-expanded="true" title="Minimize">&#8722;</button><div class="full ttl"><b>Florida canals and lakes</b></div><div class="pill"><button id="pillbtn" aria-label="Expand header">Canals map <span aria-hidden="true">&#9662;</span></button><button id="trace2" class="pt">Path to ocean</button><a href="https://github.com/sbrandes2024/pbg-canals-map/issues/new?title=Suggestion&amp;labels=suggestion" target="_blank" rel="noopener">Suggest</a></div><div class="srch" id="srch"><form class="srow" id="sform" role="search" autocomplete="off"><input id="q" type="search" inputmode="search" enterkeyhint="search" placeholder="Address or place" aria-label="Search an address or place" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"><button type="submit" aria-label="Search">Go</button><button type="button" id="loc" class="alt" aria-label="Use my location" title="Use my location">&#9737;</button></form><ul id="res" role="listbox"></ul><div id="sstat"></div><div class="rad" role="group" aria-label="Search radius"><span>Radius</span><button type="button" data-r="10">10 mi</button><button type="button" data-r="20">20 mi</button><button type="button" data-r="30">30 mi</button></div><div id="lstat" aria-live="polite"></div></div>
-<div class="full"><span style="color:#555;font-size:13px">Starts at Palm Beach Gardens. Search any Florida zip code or address to load water data around it. Tap any canal, lake or marker for details.</span>
+<div class="hdr" id="hdr"><button class="tog" id="tog" aria-label="Minimize header" aria-expanded="true" title="Minimize">&#8722;</button><div class="full ttl"><b>Canals, rivers and lakes</b></div><div class="pill"><button id="pillbtn" aria-label="Expand header">Canals map <span aria-hidden="true">&#9662;</span></button><button id="trace2" class="pt">Path to ocean</button><a href="https://github.com/sbrandes2024/pbg-canals-map/issues/new?title=Suggestion&amp;labels=suggestion" target="_blank" rel="noopener">Suggest</a></div><div class="srch" id="srch"><form class="srow" id="sform" role="search" autocomplete="off"><input id="q" type="search" inputmode="search" enterkeyhint="search" placeholder="Address or place" aria-label="Search an address or place" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"><button type="submit" aria-label="Search">Go</button><button type="button" id="loc" class="alt" aria-label="Use my location" title="Use my location">&#9737;</button></form><ul id="res" role="listbox"></ul><div id="sstat"></div><div class="rad" role="group" aria-label="Search radius"><span>Radius</span><button type="button" data-r="10">10 mi</button><button type="button" data-r="20">20 mi</button><button type="button" data-r="30">30 mi</button></div><div id="lstat" aria-live="polite"></div></div>
+<div class="full"><span style="color:#555;font-size:13px">Starts at Palm Beach Gardens. Search any address, city or zip code in the United States, Canada or Mexico to load water data around it. Tap any canal, lake or marker for details.</span>
 <div class="btns"><button id="trace" aria-pressed="false">Path to the ocean</button><button onclick="show('info')">How the water reaches the ocean</button><button class="alt" onclick="show('disc')">Disclaimer and sources</button></div>
 <div class="credit">A project by <b>Steve Brandes</b> &middot; <a href="https://github.com/sbrandes2024/pbg-canals-map/issues/new?title=Suggestion&amp;labels=suggestion" target="_blank" rel="noopener">Send a suggestion</a></div></div></div>
 <div id="info"><button class="x" onclick="info.style.display='none'">&times;</button><h3>Main drainage routes</h3>
@@ -90,7 +90,7 @@ html,body{margin:0;height:100%;-webkit-text-size-adjust:100%;font-family:-apple-
 <p class="small"><b>Known gaps:</b> underground pipe connections are missing, the county water body data is several years old, and the route labels were placed by hand.</p>
 <p class="small"><b>Sources and data dates</b> (loaded live from each agency for the area you searched):</p><ul class="small" id="srcs"></ul>
 <p class="small">Palm Beach Gardens explainer and route labels were written by hand for the default area. Data is cached on this device for up to 3 days.</p>
-<p class="small"><b>Sources:</b> SFWMD, SJRWMD, SWFWMD and NWFWMD GIS services; Florida DEP NHD (USGS National Hydrography Dataset); Palm Beach County Engineering water bodies and municipal boundaries. Suwannee River WMD has no public service that answered, so the statewide NHD covers that area. Basemaps: Esri World Imagery, Esri reference labels, OpenStreetMap. Routing: USGS NLDI.</p><button class="close2" type="button" onclick="hide('disc')">Close</button></div></div>
+<p class="small"><b>Sources:</b> SFWMD, SJRWMD, SWFWMD and NWFWMD GIS services; Florida DEP NHD (USGS National Hydrography Dataset); Palm Beach County Engineering water bodies and municipal boundaries. Suwannee River WMD has no public service that answered, so the statewide NHD covers that area. Basemaps: Esri World Imagery, Esri reference labels, OpenStreetMap. Routing: USGS NLDI.<br><br><b>Outside Florida:</b> USGS NHDPlus Version 2 streams and lakes for the lower 48 states, loaded live. <b>Canada, Mexico and Alaska:</b> HydroRIVERS version 1.0 by WWF HydroSHEDS (Lehner and Grill 2013), stored in this site as tiles, with river and lake names from Natural Earth. Path to the ocean uses USGS NLDI in the lower 48 states, then HydroRIVERS to the sea, so routes can cross into Canada or Mexico.<br><br><b>Coverage:</b> most detailed in Florida, good across the rest of the lower 48 states, and approximate in Canada, Mexico and Alaska, where only rivers draining about 100 km2 or more are mapped and their lines can be off by about 500 m.</p><button class="close2" type="button" onclick="hide('disc')">Close</button></div></div>
 <script>
 const map=L.map('map',{zoomControl:false,preferCanvas:false}).setView([26.86,-80.12],11);
 const sat=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Esri World Imagery'});
@@ -127,15 +127,16 @@ map.on('zoomend',()=>{[[small,3],[secondary,2],[major,1]].forEach(([g,n])=>g.set
 const mdy=s=>s;/* dates are written out in plain words below */
 /* Sources, queried live from the browser. radius: loaded for the whole search circle. detail: loaded per view when zoomed in. */
 const SFW='https://geoweb.sfwmd.gov/agsext1/rest/services/WaterManagementSystem/',SJR='https://services.arcgis.com/s8wtJX9suxFen6TA/arcgis/rest/services/',SWF='https://www25.swfwmd.state.fl.us/arcgis11/rest/services/prjSurveyViewer/SurveyViewer/MapServer/',NWF='https://geoservices.nwfwmd.state.fl.us/server/rest/services/RMD/NWFWMD_Water_Resources/MapServer/',DEP='https://ca.dep.state.fl.us/arcgis/rest/services/OpenData/NHD/MapServer/',PBCG='https://gis.pbcgov.org/arcgis/rest/services/';
+const NHDU='https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer/';const FLBOX=L.latLngBounds([24.3,-87.7],[31.1,-79.8]);
 const SRC=[
- {id:'sfwmd_canals',label:'SFWMD canals',agency:'South Florida Water Management District',url:SFW+'Canals/FeatureServer/5',fields:'NAME,ALIAS,OWNER,HYDRO_ORDER,FLOWDIR',kind:'line',
+ {id:'sfwmd_canals',box:[-82.2,24.3,-79.9,28.7],label:'SFWMD canals',agency:'South Florida Water Management District',url:SFW+'Canals/FeatureServer/5',fields:'NAME,ALIAS,OWNER,HYDRO_ORDER,FLOWDIR',kind:'line',
   radius:"HYDRO_ORDER IN ('PRIMARY','SECONDARY') OR OWNER IS NOT NULL OR NAME IS NOT NULL",detail:"(HYDRO_ORDER IS NULL OR HYDRO_ORDER NOT IN ('PRIMARY','SECONDARY')) AND OWNER IS NULL AND NAME IS NULL",
   norm:p=>({NAME:p.NAME,ALIAS:p.ALIAS,OWNER:p.OWNER,HYDRO_ORDER:p.HYDRO_ORDER,FLOWDIR:p.FLOWDIR}),tier:tierOf,date:'metadata last modified October 28, 2025'},
- {id:'sfwmd_struct',label:'SFWMD water control structures',agency:'South Florida Water Management District',url:SFW+'All_Structures/FeatureServer/4',fields:'NAME,STRUCTURETYPE,CANAL,OPER_MAINT',kind:'point',radius:'1=1',
+ {id:'sfwmd_struct',box:[-82.2,24.3,-79.9,28.7],label:'SFWMD water control structures',agency:'South Florida Water Management District',url:SFW+'All_Structures/FeatureServer/4',fields:'NAME,STRUCTURETYPE,CANAL,OPER_MAINT',kind:'point',radius:'1=1',
   norm:p=>({NAME:p.NAME,TYPE:p.STRUCTURETYPE,CANAL:p.CANAL,OPER:p.OPER_MAINT}),date:'metadata last modified October 28, 2025; newest structure start date September 1, 2025'},
- {id:'sfwmd_struct2',label:'Water control district structures (SFWMD)',agency:'South Florida Water Management District',url:SFW+'All_Structures/FeatureServer/8',fields:'NAME,STRUCTURETYPE,CANAL,OPER_MAINT',kind:'point',radius:'1=1',
+ {id:'sfwmd_struct2',box:[-82.2,24.3,-79.9,28.7],label:'Water control district structures (SFWMD)',agency:'South Florida Water Management District',url:SFW+'All_Structures/FeatureServer/8',fields:'NAME,STRUCTURETYPE,CANAL,OPER_MAINT',kind:'point',radius:'1=1',
   norm:p=>({NAME:p.NAME,TYPE:p.STRUCTURETYPE,CANAL:p.CANAL,OPER:p.OPER_MAINT}),date:'metadata last modified October 28, 2025'},
- {id:'sfwmd_npbcid',label:'NPBCID district boundary (SFWMD special districts)',agency:'South Florida Water Management District',url:SFW+'SFWMD_Special_Districts/FeatureServer/0',fields:'SPECIAL_DISTRICT_NAME,WEBSITE',kind:'poly',group:'npb',
+ {id:'sfwmd_npbcid',box:[-82.2,24.3,-79.9,28.7],label:'NPBCID district boundary (SFWMD special districts)',agency:'South Florida Water Management District',url:SFW+'SFWMD_Special_Districts/FeatureServer/0',fields:'SPECIAL_DISTRICT_NAME,WEBSITE',kind:'poly',group:'npb',
   radius:"SPECIAL_DISTRICT_NAME LIKE '%NORTHERN PALM BEACH%'",norm:p=>({NAME:p.SPECIAL_DISTRICT_NAME,WEBSITE:p.WEBSITE}),date:'metadata last modified April 12, 2023',off:.0003},
  {id:'sjr_edge',box:[-82.7,27.1,-80.3,30.9],label:'SJRWMD streams and canals (HydroEdge 24K)',agency:'St. Johns River Water Management District',url:SJR+'Stream_flowpath_24K_HydroEdge/FeatureServer/11',fields:'NAME,HYDROORDER,NHDFTYPE',kind:'line',
   radius:'(HYDROORDER IN (1,2) OR NAME IS NOT NULL) AND NHDFTYPE<>566',detail:'(HYDROORDER IS NULL OR HYDROORDER NOT IN (1,2)) AND NAME IS NULL AND NHDFTYPE<>566',
@@ -150,15 +151,20 @@ const SRC=[
   norm:p=>({NAME:p.STRUCTURE_ACCESS_NAME,TYPE:p.TYPE,OPER:p.STROWNER}),date:'service runs 6 AM to 10 PM Eastern',night:true},
  {id:'nwf_rivers',box:[-87.7,29.4,-83.1,31.1],label:'NWFWMD rivers',agency:'Northwest Florida Water Management District',url:NWF+'1',fields:'GNIS_Name',kind:'line',radius:'1=1',norm:p=>({NAME:p.GNIS_Name}),tier:()=>1,date:'exported from NHD in May 2015, edited August 14, 2019'},
  {id:'nwf_lakes',box:[-87.7,29.4,-83.1,31.1],label:'NWFWMD major lakes',agency:'Northwest Florida Water Management District',url:NWF+'3',fields:'NAME,COUNTY',kind:'poly',group:'lakes',radius:'1=1',norm:p=>({NAME:p.NAME}),date:'October 2016'},
- {id:'dep_nhd',label:'Statewide NHD streams and canals (FDEP, 1:24,000)',agency:'Florida DEP and USGS',url:DEP+'4',fields:'GNIS_NAME,FTYPE,VISIBILITYFILTER',kind:'line',group:'nhd',
+ {id:'dep_nhd',box:[-87.7,24.3,-79.8,31.1],label:'Statewide NHD streams and canals (FDEP, 1:24,000)',agency:'Florida DEP and USGS',url:DEP+'4',fields:'GNIS_NAME,FTYPE,VISIBILITYFILTER',kind:'line',group:'nhd',
   radius:'(FTYPE IN (336,460) AND VISIBILITYFILTER>=250000) OR (FTYPE=558 AND GNIS_NAME IS NOT NULL)',detail:'FTYPE IN (336,460) AND (VISIBILITYFILTER<250000 OR VISIBILITYFILTER IS NULL)',norm:p=>({NAME:p.GNIS_NAME,TYPE:p.FTYPE===336?'Canal or ditch':'Stream or river',VIS:p.VISIBILITYFILTER}),
   tier:p=>p.VIS>=1000000&&p.NAME?1:(p.VIS>=250000||p.NAME)?2:3,date:'newest feature date November 1, 2023'},
- {id:'dep_wb',label:'Statewide NHD lakes and reservoirs (FDEP, 1:24,000)',agency:'Florida DEP and USGS',url:DEP+'6',fields:'GNIS_NAME,FTYPE,AREASQKM',kind:'poly',group:'lakes',
+ {id:'dep_wb',box:[-87.7,24.3,-79.8,31.1],label:'Statewide NHD lakes and reservoirs (FDEP, 1:24,000)',agency:'Florida DEP and USGS',url:DEP+'6',fields:'GNIS_NAME,FTYPE,AREASQKM',kind:'poly',group:'lakes',
   radius:'FTYPE IN (390,436) AND AREASQKM>=0.5',detail:'FTYPE IN (390,436) AND AREASQKM>=0.004 AND AREASQKM<0.5',norm:p=>({NAME:p.GNIS_NAME,TYPE:p.FTYPE===436?'Reservoir':'Lake or pond'}),date:'newest feature date November 1, 2023',dedupe:true},
- {id:'dep_area',label:'Statewide NHD river and canal water areas (FDEP, 1:24,000)',agency:'Florida DEP and USGS',url:DEP+'5',fields:'GNIS_NAME,FTYPE',kind:'poly',group:'area',radius:'FTYPE IN (460,336)',
+ {id:'dep_area',box:[-87.7,24.3,-79.8,31.1],label:'Statewide NHD river and canal water areas (FDEP, 1:24,000)',agency:'Florida DEP and USGS',url:DEP+'5',fields:'GNIS_NAME,FTYPE',kind:'poly',group:'area',radius:'FTYPE IN (460,336)',
   norm:p=>({NAME:p.GNIS_NAME,TYPE:p.FTYPE===336?'Canal':'River'}),date:'newest feature date November 1, 2023',nopbc:true},
  {id:'pbc_wb',label:'Palm Beach County water bodies',agency:'Palm Beach County Engineering',url:PBCG+'ENG/WATER/FeatureServer/34',fields:'FINALNAME,TYPE,CLASS',kind:'poly',group:'pbc',
   detail:"TYPE IS NULL OR TYPE NOT IN ('ICWW','OCEAN','RIVER','CANAL')",radius:"TYPE IN ('ICWW','OCEAN','RIVER','CANAL')",norm:p=>({NAME:p.FINALNAME,TYPE:p.TYPE,CLASS:p.CLASS}),date:'newest record change near Palm Beach Gardens June 15, 2022 (countywide August 2, 2023)',county:'pbc'},
+ {id:'usgs_flow',label:'USGS NHDPlus streams and rivers (national, 1:100,000)',agency:'U.S. Geological Survey',url:NHDU+'4',fields:'GNIS_NAME,FTYPE,StreamOrde',kind:'line',group:'nhd',notfl:true,
+  radius:'StreamOrde>=3',detail:'StreamOrde<3',norm:p=>({NAME:p.GNIS_NAME,TYPE:/canal/i.test(p.FTYPE||'')?'Canal or ditch':'Stream or river',SO:p.StreamOrde}),tier:p=>p.SO>=6?1:p.SO>=4?2:3,date:'NHDPlus Version 2, lower 48 states'},
+ {id:'usgs_wb',label:'USGS NHDPlus lakes and reservoirs (national)',agency:'U.S. Geological Survey',url:NHDU+'10',fields:'GNIS_NAME,FTYPE,AREASQKM',kind:'poly',group:'lakes',notfl:true,
+  radius:"AREASQKM>=0.3 AND FTYPE IN ('LakePond','Reservoir')",detail:"AREASQKM>=0.02 AND AREASQKM<0.3 AND FTYPE IN ('LakePond','Reservoir')",norm:p=>({NAME:p.GNIS_NAME,TYPE:p.FTYPE==='Reservoir'?'Reservoir':'Lake or pond'}),date:'NHDPlus Version 2, lower 48 states'},
+ {id:'hr',label:'HydroRIVERS rivers (Canada, Mexico, Alaska and beyond the lower 48 states)',agency:'WWF HydroSHEDS, names from Natural Earth',custom:true,kind:'line',date:'HydroRIVERS version 1.0, built from 15 arc second elevation data; stored in this site as tiles'},
  {id:'pbc_city',label:'Palm Beach Gardens city limit',agency:'Palm Beach County Planning, Zoning and Building',url:PBCG+'PZB/MUNICIPALITIES/FeatureServer/0',fields:'MUNINAME',kind:'poly',group:'city',radius:"MUNINAME='Palm Beach Gardens'",norm:p=>({NAME:p.MUNINAME}),off:.0001,county:'pbc'}
 ];
 const S={};SRC.forEach(s=>S[s.id]={n:0,state:'idle',msg:''});
@@ -204,6 +210,13 @@ function renderStatus(){const v=Object.values(S);const busy=v.filter(x=>x.state=
   ('Showing water data within '+radiusMi+' miles of '+esc(centerLabel)+(err.length?'. <a href="#" onclick="show(\'disc\');return false">'+err.length+' source'+(err.length>1?'s':'')+' unavailable</a>.':'.'));
  const t=document.getElementById('srcs');if(t)t.innerHTML=SRC.map(s=>{const x=S[s.id];return '<li><b>'+esc(s.label)+'</b> ('+esc(s.agency)+'): '+(x.state==='ok'?x.n+(x.n===1?' feature':' features')+' loaded':x.state==='none'?'none in this area':x.state==='error'?'<span class="err">unavailable: '+esc(x.msg)+'</span>':x.state==='skip'?'not used here':x.state==='loading'?'loading':'waiting')+(s.date?'. Data date: '+esc(s.date):'')+(x.edit?'. Last edit reported by the service: '+esc(x.edit):'')+'</li>'}).join('')}
 async function liveEdit(s){if(!s.live||S[s.id].edit)return;try{const j=await cget(s.url+'?f=json');const d=j.editingInfo&&(j.editingInfo.dataLastEditDate||j.editingInfo.lastEditDate);if(d)S[s.id].edit=new Date(d).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric',timeZone:'UTC'})}catch(e){}}
+async function hrLoadArea(s,seq){const R=radiusMi*1609.34;const I=await hrIndex();const ts=I.ft;const dLat=R/111000,dLng=R/(111000*Math.cos(center.lat*Math.PI/180));const ps=[];
+ for(let y=Math.floor((center.lat-dLat)/ts);y<=Math.floor((center.lat+dLat)/ts);y++)for(let x=Math.floor((center.lng-dLng)/ts);x<=Math.floor((center.lng+dLng)/ts);x++)ps.push(hrTile('f',x,y));
+ const segs=(await Promise.all(ps)).flat();if(seq!==loadSeq)return 0;let n=0;const keep=[];
+ segs.forEach(sg=>{if(FLBOX.contains(sg.ll[0])||!sg.ll.some(p=>center.distanceTo(p)<=R))return;const tier=sg.up>=10000?1:sg.up>=1000?2:3;const p={NAME:sg.name,_tier:tier,_src:'hr',UP:sg.up};
+  const l=L.polyline(sg.ll,Object.assign({renderer:canvas},lineStyle(tier)));l.feature={type:'Feature',properties:p};
+  l.bindPopup(()=>pop([['River',sg.name||'Unnamed river or stream'],['Drains about',sg.up.toLocaleString('en-US')+' km2 upstream'],['Size class',TIER[tier].name.replace('canal','river or canal')]],s.label+', '+s.agency+'. River lines are approximate, within about 500 m.'));nhd.addLayer(l);keep.push([nhd,l]);n++});
+ (loaded[s.id]=loaded[s.id]||[]).push(...keep);if(n)map.attributionControl.addAttribution('HydroRIVERS by WWF HydroSHEDS, Natural Earth');return n}
 const offFor=r=>r<=10?.00006:r<=20?.0001:.00016;
 async function loadArea(){const seq=++loadSeq;clearData();ring.clearLayers();
  L.circle(center,{radius:radiusMi*1609.34,color:'#ffffff',weight:2,dashArray:'6 6',fill:false,interactive:false}).addTo(ring);
@@ -213,11 +226,13 @@ async function loadArea(){const seq=++loadSeq;clearData();ring.clearLayers();
  await new Promise(res=>{const next=()=>{if(seq!==loadSeq)return res();if(!queue.length&&!active)return res();while(active<4&&queue.length){const s=queue.shift();
    if(s.county==='pbc'&&center.distanceTo(PBCBOX.getCenter())>radiusMi*1609+60000){S[s.id].state='skip';continue}
    if(s.nopbc&&PBCBOX.contains(center)){S[s.id].state='skip';continue}
+   if(s.notfl&&FLBOX.contains(center)){S[s.id].state='skip';continue}
+   if(s.custom){active++;S[s.id].state='loading';renderStatus();hrLoadArea(s,seq).then(n=>{if(seq!==loadSeq)return;S[s.id].n=n;S[s.id].state=n?'ok':'none'}).catch(e=>{if(seq!==loadSeq)return;S[s.id].state='error';S[s.id].msg=e.message}).finally(()=>{active--;renderStatus();next()});continue}
    if(s.box){const pad=radiusMi*1609/111000;const [w,so,e,no]=s.box;if(center.lng<w-pad*1.15||center.lng>e+pad*1.15||center.lat<so-pad||center.lat>no+pad){S[s.id].state='skip';continue}}
    if(!s.radius){S[s.id].state='skip';continue}
    active++;S[s.id].state='loading';renderStatus();
-   pageAll(s,Object.assign({where:s.radius,maxAllowableOffset:s.off||offFor(radiusMi)},geo),s.kind==='point'?4000:9000).then(f=>{const n=addFeatures(s,f,seq);S[s.id].n=n;S[s.id].state=n?'ok':'none';liveEdit(s)})
-    .catch(e=>{S[s.id].state='error';S[s.id].msg=(s.night&&!navigator.onLine?'offline':(e.name==='AbortError'?'timed out':e.message))+(s.night?' (this service only runs 6 AM to 10 PM)':'')})
+   pageAll(s,Object.assign({where:s.radius,maxAllowableOffset:s.off||offFor(radiusMi)},geo),s.kind==='point'?4000:9000).then(f=>{if(seq!==loadSeq)return;const n=addFeatures(s,f,seq);S[s.id].n=n;S[s.id].state=n?'ok':'none';liveEdit(s)})
+    .catch(e=>{if(seq!==loadSeq)return;S[s.id].state='error';S[s.id].msg=(s.night&&!navigator.onLine?'offline':(e.name==='AbortError'?'timed out':e.message))+(s.night?' (this service only runs 6 AM to 10 PM)':'')})
     .finally(()=>{active--;renderStatus();next()})}if(!queue.length&&!active)res()};next()});
  if(seq!==loadSeq)return;
  /* hide statewide NHD lines when a district canal network covers the area */
@@ -228,14 +243,14 @@ const detailDone=new Set(),hiDone=new Set();const TS=.04,HS=.01;
 async function loadDetail(){if(map.getZoom()<13)return;const seq=loadSeq;const b=map.getBounds();const R=radiusMi*1609.34;
  const tiles=[];for(let y=Math.floor(b.getSouth()/TS);y<=Math.floor(b.getNorth()/TS);y++)for(let x=Math.floor(b.getWest()/TS);x<=Math.floor(b.getEast()/TS);x++){const tb=L.latLngBounds([y*TS,x*TS],[(y+1)*TS,(x+1)*TS]);
   const near=L.latLng(Math.max(tb.getSouth(),Math.min(center.lat,tb.getNorth())),Math.max(tb.getWest(),Math.min(center.lng,tb.getEast())));if(center.distanceTo(near)<=R)tiles.push([x+','+y,tb])}
- for(const [k,tb] of tiles)for(const s of SRC){if(!s.detail||S[s.id].state==='error'||S[s.id].state==='skip')continue;if(s.county==='pbc'&&!PBCBOX.intersects(tb))continue;if(s.dedupe&&(PBCBOX.intersects(tb)||S.sjr_wb.n>0))continue;const key=s.id+'|'+k;if(detailDone.has(key))continue;detailDone.add(key);
+ for(const [k,tb] of tiles)for(const s of SRC){if(s.custom||!s.detail||S[s.id].state==='error'||S[s.id].state==='skip')continue;if(s.county==='pbc'&&!PBCBOX.intersects(tb))continue;if(s.dedupe&&(PBCBOX.intersects(tb)||S.sjr_wb.n>0))continue;const key=s.id+'|'+k;if(detailDone.has(key))continue;detailDone.add(key);
   S[s.id].state='loading';renderStatus();
   pageAll(s,{where:s.detail,geometry:[tb.getWest(),tb.getSouth(),tb.getEast(),tb.getNorth()].map(v=>v.toFixed(4)).join(','),geometryType:'esriGeometryEnvelope',inSR:4326,spatialRel:'esriSpatialRelIntersects',maxAllowableOffset:.00002},4000)
    .then(f=>{f=f.filter(ff=>{const g=ff.geometry;if(!g)return false;const c=g.type==='Point'?g.coordinates:(g.coordinates.flat(3).length?[g.coordinates.flat(3)[0],g.coordinates.flat(3)[1]]:null);return c&&center.distanceTo([c[1],c[0]])<=R+2000});const n=addFeatures(s,f,seq);S[s.id].n+=n;S[s.id].state=S[s.id].n?'ok':'none';markGraphDirty()})
    .catch(e=>{detailDone.delete(key);S[s.id].state=S[s.id].n?'ok':'error';S[s.id].msg=e.message}).finally(renderStatus)}
  /* zoom 15 and closer: swap the generalized whole area lines and polygons for full resolution copies in view */
  if(map.getZoom()>=15){const vb=map.getBounds().pad(.15);for(let y=Math.floor(vb.getSouth()/HS);y<=Math.floor(vb.getNorth()/HS);y++)for(let x=Math.floor(vb.getWest()/HS);x<=Math.floor(vb.getEast()/HS);x++){const tb=L.latLngBounds([y*HS,x*HS],[(y+1)*HS,(x+1)*HS]);
-  for(const s of SRC){if(s.kind==='point'||!s.radius||s.group==='city'||s.group==='npb'||S[s.id].state==='error'||S[s.id].state==='skip'||!S[s.id].n)continue;if(s.county==='pbc'&&!PBCBOX.intersects(tb))continue;const key=s.id+'|'+x+','+y;if(hiDone.has(key))continue;hiDone.add(key);
+  for(const s of SRC){if(s.custom||s.kind==='point'||!s.radius||s.group==='city'||s.group==='npb'||S[s.id].state==='error'||S[s.id].state==='skip'||!S[s.id].n)continue;if(s.county==='pbc'&&!PBCBOX.intersects(tb))continue;const key=s.id+'|'+x+','+y;if(hiDone.has(key))continue;hiDone.add(key);
    pageAll(s,{where:s.radius,geometry:[tb.getWest(),tb.getSouth(),tb.getEast(),tb.getNorth()].map(v=>v.toFixed(4)).join(','),geometryType:'esriGeometryEnvelope',inSR:4326,spatialRel:'esriSpatialRelIntersects',maxAllowableOffset:.000005,geometryPrecision:6},2000)
     .then(f=>{addFeatures(s,f,seq,true);markGraphDirty()}).catch(()=>hiDone.delete(key))}}}}
 let dTimer=null;map.on('moveend',()=>{clearTimeout(dTimer);dTimer=setTimeout(loadDetail,400)});
@@ -304,6 +319,7 @@ function inPoly(ll,l){const pt=[ll.lng,ll.lat];let ins=false;const rs=l.getLatLn
 function snap(ll){const box=L.latLngBounds([ll.lat-.03,ll.lng-.033],[ll.lat+.03,ll.lng+.033]);let best=null;
  snapTargets().forEach(([l,k])=>{if(!l.getBounds||!box.intersects(l.getBounds()))return;const r=nearestOn(l,ll);if(r&&(!best||r.d<best.d))best={...r,l,k}});
  if(best&&best.k!=='canal'){let c=null;snapTargets().forEach(([l,k])=>{if(k!=='canal'||!l.getBounds||!box.intersects(l.getBounds()))return;const r=nearestOn(l,ll);if(r&&(!c||r.d<c.d))c={...r,l,k}});if(c&&map.distance(ll,c.p)<60&&(best.k==='water'||map.distance(ll,c.p)<25))best=c}
+ if(best&&best.l.feature&&best.l.feature.properties&&best.l.feature.properties._src==='hr'){let u=null;snapTargets().forEach(([l,k])=>{const p=l.feature&&l.feature.properties;if(k!=='canal'||!p||p._src==='hr'||!l.getBounds||!box.intersects(l.getBounds()))return;const r=nearestOn(l,ll);if(r&&(!u||r.d<u.d))u={...r,l,k}});if(u&&u.d<=best.d+300)best=u}
  if(!best)return null;best.m=map.distance(ll,best.p);const p=best.l.feature&&best.l.feature.properties||{};best.name=(best.k==='canal'&&p.NAME?canalLabel(p):tc(p.FINALNAME||p.NAME||p.name||''))||(best.k==='lake'?'Unnamed lake or pond':best.k==='canal'?'Unnamed canal':'Water body');return best}
 async function J(u,opt){if(cache.has(u))return cache.get(u);const r=await fetch(u.split('#')[0],opt);if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();cache.set(u,j);return j}
 function structName(n){n=(n||'').replace(/_/g,' ').trim();let m=/^S(\d+[A-Z]?)$/.exec(n);if(m)return 'S-'+m[1];m=/^S(\d+[A-Z]?) (LOCK|WEIR|PUMP)$/i.exec(n);if(m)return 'S-'+m[1]+' '+m[2].toLowerCase();return n}
@@ -327,8 +343,8 @@ function canalLabel(p){const n=tc(p.NAME);return p.ALIAS?n+' ('+tc(p.ALIAS)+')':
 const LONGGAP=600;/* connections longer than this are not drawn as a line across land */
 const RANK={'Official flowline':3,'Likely':2,'Assumed':1};
 async function nhdFrom(ll){const pos=await J(NLDI+'position?f=json&coords='+encodeURIComponent('POINT('+ll.lng.toFixed(5)+' '+ll.lat.toFixed(5)+')'));const f0=pos.features&&pos.features[0];if(!f0)throw new Error('no flowline');
- const comid=f0.properties.comid||f0.properties.identifier;const dm=await J(NLDI+comid+'/navigation/DM/flowlines?f=json&distance=1500');const fl=dm.features||[];
- let attrs={},wb={};try{const ids=fl.map(f=>f.properties.nhdplus_comid).join(',');const j=await J(EPA2+'#'+ids.length+ids.slice(0,40),{method:'POST',body:new URLSearchParams({where:'comid in ('+ids+')',outFields:'comid,gnis_name,tidal,wbareacomid',returnGeometry:'false',f:'json'})});(j.features||[]).forEach(x=>attrs[x.attributes.comid]=x.attributes);
+ const comid=f0.properties.comid||f0.properties.identifier;const dm=await J(NLDI+comid+'/navigation/DM/flowlines?f=json&distance=9999');const fl=dm.features||[];
+ let attrs={},wb={};try{const ids=fl.slice(0,2500).map(f=>f.properties.nhdplus_comid).join(',');const j=await J(EPA2+'#'+ids.length+ids.slice(0,40),{method:'POST',body:new URLSearchParams({where:'comid in ('+ids+')',outFields:'comid,gnis_name,tidal,wbareacomid',returnGeometry:'false',f:'json'})});(j.features||[]).forEach(x=>attrs[x.attributes.comid]=x.attributes);
   const w=[...new Set(Object.values(attrs).map(a=>a.wbareacomid).filter(x=>x>0))];if(w.length){const k=await J(EPA4+'#'+w.join(','),{method:'POST',body:new URLSearchParams({where:'comid in ('+w.join(',')+')',outFields:'comid,gnis_name',returnGeometry:'false',f:'json'})});(k.features||[]).forEach(x=>wb[x.attributes.comid]=x.attributes.gnis_name)}}catch(e){}
  const pts=[];fl.forEach(f=>{const g=f.geometry,c=g.type==='MultiLineString'?g.coordinates.flat():g.coordinates;const a=attrs[f.properties.nhdplus_comid]||{};c.forEach(xy=>pts.push({ll:L.latLng(xy[1],xy[0]),n:a.gnis_name||wb[a.wbareacomid]||null,tidal:a.tidal===1}))});return pts}
 /* Water only routing to a real inlet: an undirected graph of statewide NHD flowlines (canals, streams, rivers and the
@@ -361,6 +377,39 @@ async function waterRoute(from,cands,back){if(!cands.length)return null;back=bac
  if(!hit)return null;const path=[],gaps=[],names=[];let k=hit;while(k!==s0.k){const [p,gap,n]=prev.get(k);const a=node.get(p),c=node.get(k);if(gap)gaps.push([L.latLng(a[1],a[0]),L.latLng(c[1],c[0])]);if(n)names.push(n);path.push(L.latLng(c[1],c[0]));k=p}
  path.push(L.latLng(node.get(s0.k)[1],node.get(s0.k)[0]));path.reverse();names.reverse();
  return {pts:path,gaps,names:[...new Set(names)],inlet:tg.get(hit).n,endGap:tg.get(hit).d,startGap:s0.d,backIdx:bi}}
+/* HydroRIVERS (WWF HydroSHEDS, version 1.0) prebuilt tiles in this repo: f = 1 degree tiles, rivers draining 100 km2 or more,
+   outside the lower 48 states; t = 4 degree tiles, rivers draining 1,000 km2 or more, everywhere in North America. */
+const HRB='hr/';let HRI=null;const hrT=new Map(),hrS=new Map();
+async function hrIndex(){if(!HRI){const j=await cget(new URL(HRB+'index.json',location.href).href);HRI=Object.assign({},j,{F:new Set(j.f),T:new Set(j.t)})}return HRI}
+async function hrTile(l,x,y){const I=await hrIndex();const k=x+'_'+y,key=l+k;if(hrT.has(key))return hrT.get(key);
+ if(!(l==='f'?I.F:I.T).has(k)){hrT.set(key,[]);return []}
+ const p=cget(new URL(HRB+l+'/'+k+'.json',location.href).href).then(j=>{const out=j.s.map(a=>{const ll=[];let x=0,y=0;for(let i=6;i<a.length;i+=2){x+=a[i];y+=a[i+1];ll.push(L.latLng(y/1e4,x/1e4))}
+  const sg={id:a[0],nx:a[1],up:a[2],en:a[3],dd:a[4],name:a[5]>=0?j.n[a[5]]:null,ll,l};const o=hrS.get(sg.id);if(!o||(o.l==='t'&&l==='f'))hrS.set(sg.id,sg);return sg});return out}).catch(()=>[]);
+ hrT.set(key,p);return p}
+async function hrAround(ll,l){const I=await hrIndex();const ts=l==='f'?I.ft:I.tt;const x=Math.floor(ll.lng/ts),y=Math.floor(ll.lat/ts);const ps=[];for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++)ps.push(hrTile(l,x+dx,y+dy));return (await Promise.all(ps)).flat()}
+function segNear(ll,sg){const cl=Math.cos(ll.lat*Math.PI/180);let b=null;const P=[ll.lng*cl,ll.lat];for(let i=0;i<sg.ll.length-1;i++){const a=[sg.ll[i].lng*cl,sg.ll[i].lat],c=[sg.ll[i+1].lng*cl,sg.ll[i+1].lat];const dx=c[0]-a[0],dy=c[1]-a[1];const t=Math.max(0,Math.min(1,((P[0]-a[0])*dx+(P[1]-a[1])*dy)/((dx*dx+dy*dy)||1e-12)));const q=[a[0]+t*dx,a[1]+t*dy];const d=Math.hypot(P[0]-q[0],P[1]-q[1])*111200;if(!b||d<b.d)b={d,i,p:L.latLng(q[1],q[0]/cl)}}return b}
+async function hrRoute(from,maxM,minUp){const cand=[...(await hrAround(from,'f')),...(await hrAround(from,'t'))];let b=null;
+ for(const sg of cand){if(minUp&&sg.up<minUp)continue;const r=segNear(from,sg);if(r&&r.d<=maxM&&(!b||r.d<b.r.d-1||(Math.abs(r.d-b.r.d)<=1&&sg.up>b.sg.up)))b={sg:hrS.get(sg.id)||sg,r}}
+ if(!b)return null;if(b.sg!==hrS.get(b.sg.id)){}
+ const sg0=hrS.get(b.sg.id)||b.sg;const r0=segNear(from,sg0);const pts=[r0.p,...sg0.ll.slice(r0.i+1)];const names=[];let cur=sg0,n=0,last=null;
+ if(cur.name){names.push(cur.name);last=cur.name}
+ const runs=new Map();const addRun=(nm,sg)=>{if(!nm)return;let k=0;for(let i=1;i<sg.ll.length;i++)k+=sg.ll[i-1].distanceTo(sg.ll[i]);runs.set(nm,(runs.get(nm)||0)+k)};addRun(cur.name,cur);
+ while(cur.nx&&n<30000){n++;let nx=hrS.get(cur.nx);if(!nx){const e=cur.ll[cur.ll.length-1];await hrAround(e,cur.up>=900?'t':'f');nx=hrS.get(cur.nx);if(!nx){await hrAround(e,cur.up>=900?'f':'t');nx=hrS.get(cur.nx)}}
+  if(!nx)break;pts.push(...nx.ll.slice(1));addRun(nx.name,nx);if(nx.name&&nx.name!==last){names.push(nx.name);last=nx.name}cur=nx}
+ const keepN=[...new Set(names.map(nm=>/River$/.test(nm)?nm.replace(/^Lake /,''):nm))].filter(nm=>(runs.get(nm)||runs.get('Lake '+nm)||0)>=15000||/\b(Lake|Lago|Lac|Laguna)\b/i.test(nm));
+ return {pts,names:keepN,endo:!!cur.en&&!cur.nx,dd:sg0.dd,gap:r0.d,complete:!cur.nx}}
+/* where a river mouth meets the sea, by rough regions */
+function oceanOf(ll){const y=ll.lat,x=ll.lng;
+ if(y>=51&&y<66&&x>-96&&x<-76)return 'Hudson Bay (Arctic Ocean)';
+ if(y>=55&&y<63&&x>=-76&&x<-60)return 'Ungava Bay (Atlantic Ocean)';
+ if(y>=66||(y>=60&&x>-141&&x<-80))return x<-156&&y<68?'Chukchi Sea (Arctic Ocean)':'Arctic Ocean';
+ if(x<=-156&&y>=52)return 'Bering Sea (Pacific Ocean)';
+ if(y>45&&y<52.5&&x>-71.5&&x<-56)return 'Gulf of St. Lawrence (Atlantic Ocean)';
+ if(y>=22.5&&y<=32.5&&x>-115.3&&x<-107)return 'Gulf of California (Pacific Ocean)';
+ if(y>=17.6&&y<=31.5&&x>=-98.5&&(x<=-81.4||(y<25.5&&x<-80.4)))return 'Gulf of America (Gulf of Mexico)';
+ if(y<22&&x>-89.5)return 'Caribbean Sea (Atlantic Ocean)';
+ if(x<-100||(y<17.6&&x<-87))return 'Pacific Ocean';
+ return 'Atlantic Ocean'}
 const nearInlets=(ll,km,n)=>INLETS.map(x=>[x,map.distance(ll,[x[1],x[2]])]).filter(x=>x[1]<=km*1000).sort((a,b)=>a[1]-b[1]).slice(0,n).map(x=>x[0]);
 function cutAtInlet(lls){for(let i=0;i<lls.length;i++){for(const n of INLETS){const r=i===lls.length-1?6000:2500;if(map.distance(lls[i],[n[1],n[2]])<r)return {i,inlet:n}}}return null}
 async function trace(tap){pathG.clearLayers();map.closePopup();rtShow('<h3>Path to the ocean</h3><p>Finding the nearest water and tracing it downstream...</p>');
@@ -377,13 +426,15 @@ async function trace(tap){pathG.clearLayers();map.closePopup();rtShow('<h3>Path 
   if(ne){const assumed=!(s&&((s.k==='canal'&&ne.m<60)||(s.k==='water'&&ne.m<150)));if(ne.m>5){dashed.push({a:P,b:ne.p,c:assumed?'Assumed':'Likely'});if(assumed)push('Assumed pipe or culvert to '+(canalLabel(ne.e.p)||'the nearest canal')+(ne.m>LONGGAP?' (about '+fmtD(ne.m)+', not drawn)':''),'Assumed');hops.push(assumed?'Assumed':'Likely')}
    sf=walkSF(ne,P);const off0=line.length;line.push(...sf.pts);const c0=cutAtInlet(line),lim0=c0?c0.i-off0:1e9;const ev=sf.names.filter(x=>x.i<=lim0);sf.pts.forEach((p,i)=>{if(i>lim0)return;const sn=nearStruct(p);if(sn)ev.push({n:sn+' control structure',i})});ev.sort((a,b)=>a.i-b.i).forEach(x=>push(x.n,'Official flowline'));hops.push('Official flowline')}}
  /* 2. USGS NLDI downstream from where SFWMD ends, or from the snap point */
- let start=sf?sf.end:P,cut=cutAtInlet(line);
- if(!cut){let nh=[];try{nh=await nhdFrom(start)}catch(e){if(!line.length)return rtShow('<h3>Path to the ocean</h3><p>'+snapTxt+'</p><p class="err">The USGS routing service did not answer. Please try again in a moment.</p>')}
+ let start=sf?sf.end:P,cut=cutAtInlet(line),nldiFail=false;
+ if(!cut){let nh=[];try{nh=await nhdFrom(start)}catch(e){nldiFail=true}
   const trim=(arr,ll)=>{let bi=0,bd=1e18;arr.slice(0,400).forEach((x,i)=>{const d=map.distance(ll,x.ll);if(d<bd){bd=d;bi=i}});return arr.slice(bi)};
   if(nh.length)nh=trim(nh,start);
+  if(nh.length&&map.distance(start,nh[0].ll)>400){for(const [dy,dx] of [[.004,0],[-.004,0],[0,.004],[0,-.004]]){try{const alt=trim(await nhdFrom(L.latLng(start.lat+dy,start.lng+dx)),start);if(alt.length&&map.distance(start,alt[0].ll)<map.distance(start,nh[0].ll))nh=alt}catch(e){}if(map.distance(start,nh[0].ll)<=400)break}}
   /* if the SFWMD walk ends far from any USGS flowline, drop it and start the USGS route at the tap instead of jumping across land */
   if(sf&&nh.length&&map.distance(start,nh[0].ll)>400){let nh2=[];try{nh2=trim(await nhdFrom(P),P)}catch(e){}
    if(nh2.length&&map.distance(P,nh2[0].ll)<map.distance(start,nh[0].ll)){line=[];dashed=[];steps.length=sfMark.steps;hops.length=sfMark.hops;sf=null;start=P;nh=nh2}}
+  if(nh.length&&!FLBOX.contains(start)&&map.distance(start,nh[0].ll)>2000){try{const pr=await hrRoute(start,1000);if(pr&&pr.gap<1000)nh=[]}catch(e){}}
   if(nh.length){if(!sf&&s&&s.k==='lake'){push('Assumed pipe or culvert to the nearest mapped flowline','Assumed');hops.push('Assumed')}
    const gap=map.distance(start,nh[0].ll);if(gap>30){dashed.push({a:start,b:nh[0].ll,c:gap<400?'Likely':'Assumed'});hops.push(gap<400?'Likely':'Assumed');if(gap>LONGGAP)push('Unmapped connection of about '+fmtD(gap)+' to the next mapped waterway (likely underground pipes or drainage wells), not drawn','Assumed')}
    const off=line.length;line.push(...nh.map(x=>x.ll));cut=cutAtInlet(line);const lim=cut?cut.i-off+1:nh.length;let tidal=false;nh.slice(0,Math.max(0,lim)).forEach(x=>{if(x.n)push(tc(x.n),'Official flowline');const sn=nearStruct(x.ll);if(sn)push(sn+' control structure','Official flowline');});hops.push('Official flowline')}}
@@ -395,11 +446,19 @@ async function trace(tap){pathG.clearLayers();map.closePopup();rtShow('<h3>Path 
  if(wr){if(wr.startGap>30){const c=wr.startGap<=150?'Likely':'Assumed';dashed.push({a:from,b:wr.pts[0],c});hops.push(c)}line.push(...wr.pts);wr.gaps.forEach(g=>dashed.push({a:g[0],b:g[1],c:'Assumed'}));if(wr.gaps.length){hops.push('Assumed');push('Short unmapped gap bridged between two waterways','Assumed')}
   wr.names.forEach(n=>push(tc(n),'Official flowline'));end=line[line.length-1];hops.push('Likely');push(wr.inlet[0],'Likely');push(sea(wr.inlet),'Likely');cut={inlet:wr.inlet}}
  else if(cut){end=line[line.length-1];hops.push('Likely');push('Water near '+cut.inlet[0],'Likely');push(sea(cut.inlet),'Likely')}
- else push('End of mapped flowline (no water route to an inlet was found)','Official flowline');
+ else{/* outside the Florida inlet list: continue on HydroRIVERS (North America) to the sea, a lake with no outlet, or the end of the data */
+  rt.querySelector('p')&&(rt.querySelector('p').textContent='Following the river network to the sea...');
+  const from2=line.length?line[line.length-1]:P;let hr=null;try{hr=await hrRoute(from2,line.length?4000:25000);if(line.length&&!hr){const h2=await hrRoute(from2,40000,5000);if(h2){h2.lakeHop=/\b(Lake|Lago|Lac|Laguna)\b/i.test(h2.names[0]||'');hr=h2}}}catch(e){hr=null}
+  if(hr&&(!line.length||hr.dd>8)){if(hr.gap>30){const c=hr.lakeHop||(line.length&&hr.gap<1500)||hr.gap<400?'Likely':'Assumed';dashed.push({a:from2,b:hr.pts[0],c,water:!!hr.lakeHop});hops.push(c);if(!line.length&&s&&s.k==='lake')push('Assumed connection to the nearest mapped river','Assumed');if(hr.gap>LONGGAP&&!hr.lakeHop)push('Unmapped connection of about '+fmtD(hr.gap)+' to the nearest mapped river, not drawn','Assumed')}
+   line.push(...hr.pts);hr.names.forEach(n=>push(n,'Likely'));hops.push('Likely');end=line[line.length-1];
+   if(hr.endo)push('Inland lake or basin with no outlet to the sea','Likely');else push(oceanOf(end),'Likely');cut={inlet:[hr.endo?'inland basin':oceanOf(end)]}}
+  else if(hr&&line.length&&!hr.endo){end=line[line.length-1];push(oceanOf(end),'Likely');cut={inlet:[oceanOf(end)]}}
+  else if(nldiFail&&!line.length)return rtShow('<h3>Path to the ocean</h3><p>'+snapTxt+'</p><p class="err">No mapped river was found near this spot, or the routing services did not answer. Please try another spot.</p>');
+  else push('End of mapped flowline (no water route to the sea was found)','Official flowline')}
  if(s&&s.k==='lake'&&!hops.includes('Assumed'))hops.push('Assumed');
  /* draw */
  if(line.length>1){const h=L.polyline(line,{renderer:svgR,color:'#002a9e',weight:12,opacity:pathOp(.35),lineCap:'round',smoothFactor:.3});h._po=.35;h.addTo(pathG);const a=L.polyline(line,{renderer:svgR,color:'#00e1ff',weight:5,opacity:pathOp(1),className:'flowanim',lineCap:'round',smoothFactor:.3});a._po=1;a.addTo(pathG)}
- dashed.filter(d=>{if(map.distance(d.a,d.b)<=LONGGAP)return true;[d.a,d.b].forEach(p=>L.circleMarker(p,{renderer:svgR,radius:6,color:'#ff5a5a',weight:3,fill:false}).bindTooltip('Unmapped connection, not drawn').addTo(pathG));return false}).forEach(d=>L.polyline([d.a,d.b],{renderer:svgR,color:d.c==='Assumed'?'#ff5a5a':'#ffd400',weight:4,dashArray:'6 8'}).bindTooltip(d.c==='Assumed'?'Assumed connection':'Likely connection').addTo(pathG));
+ dashed.filter(d=>{if(d.water||map.distance(d.a,d.b)<=LONGGAP)return true;[d.a,d.b].forEach(p=>L.circleMarker(p,{renderer:svgR,radius:6,color:'#ff5a5a',weight:3,fill:false}).bindTooltip('Unmapped connection, not drawn').addTo(pathG));return false}).forEach(d=>L.polyline([d.a,d.b],{renderer:svgR,color:d.c==='Assumed'?'#ff5a5a':'#ffd400',weight:4,dashArray:'6 8'}).bindTooltip(d.c==='Assumed'?'Assumed connection':'Likely connection').addTo(pathG));
  L.circleMarker(end,{radius:8,color:'#fff',weight:3,fillColor:'#0050ff',fillOpacity:1,renderer:svgR}).addTo(pathG);
  let dist=0;for(let i=1;i<line.length;i++)dist+=map.distance(line[i-1],line[i]);dashed.forEach(d=>dist+=map.distance(d.a,d.b));
  const overall=hops.reduce((w,h)=>RANK[h]<RANK[w]?h:w,'Official flowline');
@@ -426,7 +485,7 @@ document.getElementById('pillbtn').onclick=()=>{hdrEl.classList.remove('rtmin');
 try{setMin(localStorage.getItem('pbgHdrMin')==='1')}catch(e){}
 /* Address search: Esri World Geocoding first, Nominatim fallback */
 const ESRI='https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/';
-const PBC={loc:'-80.10,26.80',ext:'-80.89,26.32,-80.03,26.98',vb:'-80.89,26.98,-80.03,26.32'};
+const PBC={get loc(){const c=map.getCenter();return c.lng.toFixed(3)+','+c.lat.toFixed(3)},get vb(){const b=map.getBounds().pad(2);return [b.getWest(),b.getNorth(),b.getEast(),b.getSouth()].map(v=>v.toFixed(3)).join(',')}};
 const q=document.getElementById('q'),res=document.getElementById('res'),sstat=document.getElementById('sstat');
 let deb=null,seq=0,hit=null,lastNom=0,attrE=false,attrN=false;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -436,12 +495,12 @@ function list(items,msg){res.innerHTML='';if(msg){res.innerHTML='<li class="msg"
  items.forEach(it=>{const li=document.createElement('li');li.setAttribute('role','option');li.textContent=it.label;li.onclick=()=>pick(it);res.appendChild(li)});
  res.style.display=(items.length||msg)?'block':'none'}
 async function getJSON(u){const r=await fetch(u);if(!r.ok)throw new Error(r.status);const j=await r.json();if(j.error)throw new Error(j.error.message||'error');return j}
-async function esriSuggest(text){const p=new URLSearchParams({text,location:PBC.loc,searchExtent:PBC.ext,countryCode:'USA',maxSuggestions:6,f:'json'});
+async function esriSuggest(text){const p=new URLSearchParams({text,location:PBC.loc,countryCode:'USA,CAN,MEX',maxSuggestions:6,f:'json'});
  const j=await getJSON(ESRI+'suggest?'+p);return (j.suggestions||[]).filter(s=>!s.isCollection).map(s=>({label:s.text,magicKey:s.magicKey,src:'esri'}))}
-async function esriFind(text,magicKey){const p=new URLSearchParams({SingleLine:text,location:PBC.loc,searchExtent:PBC.ext,countryCode:'USA',maxLocations:6,outFields:'Match_addr,Addr_type',f:'json'});if(magicKey)p.set('magicKey',magicKey);
+async function esriFind(text,magicKey){const p=new URLSearchParams({SingleLine:text,location:PBC.loc,countryCode:'USA,CAN,MEX',maxLocations:6,outFields:'Match_addr,Addr_type',f:'json'});if(magicKey)p.set('magicKey',magicKey);
  const j=await getJSON(ESRI+'findAddressCandidates?'+p);return (j.candidates||[]).filter(c=>c.score>=80).map(c=>({label:c.address,lat:c.location.y,lon:c.location.x,src:'esri'}))}
 async function nominatim(text){const wait=1100-(Date.now()-lastNom);if(wait>0)await new Promise(r=>setTimeout(r,wait));lastNom=Date.now();
- const p=new URLSearchParams({q:text,format:'jsonv2',limit:5,countrycodes:'us',viewbox:PBC.vb,bounded:0});
+ const p=new URLSearchParams({q:text,format:'jsonv2',limit:5,countrycodes:'us,ca,mx',viewbox:PBC.vb,bounded:0});
  const j=await getJSON('https://nominatim.openstreetmap.org/search?'+p);attr('osm');return j.map(r=>({label:r.display_name,lat:+r.lat,lon:+r.lon,src:'osm'}))}
 function show1(it){res.style.display='none';q.value=it.label;q.blur();hide('disc');hide('info');attr(it.src);
  if(hit)map.removeLayer(hit);hit=L.marker([it.lat,it.lon],{title:it.label}).addTo(map).bindPopup('<b>'+esc(it.label)+'</b>');
