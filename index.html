@@ -46,6 +46,7 @@ html,body{margin:0;height:100%;-webkit-text-size-adjust:100%;font-family:-apple-
 #disc{position:absolute;left:10px;right:10px;bottom:calc(24px + env(safe-area-inset-bottom));max-height:45%;overflow:auto;z-index:1200;background:#fffdf5;border:2px solid #e0b000;border-radius:14px;padding:12px 14px;box-shadow:0 4px 20px rgba(0,0,0,.35);font-size:14px;line-height:1.45;max-width:560px}
 #disc h3{margin:0 0 6px;font-size:16px}#disc .hide{float:right;border:0;background:#0a5bd8;color:#fff;border-radius:8px;padding:6px 12px;font-size:14px}
 #disc ul{padding-left:18px;margin:6px 0}#disc .small{color:#555;font-size:13px}
+.opbox{border-top:1px solid #ddd;margin-top:6px;padding:8px 2px 4px;font-size:13px}.leaflet-control-layers .opbox input#wop{width:100%;height:28px;margin:6px 0 0;touch-action:pan-x;accent-color:#0a5bd8;vertical-align:middle}.opk{display:flex;justify-content:space-between;color:#666;font-size:11px}
 .lgbtn{border:0;background:rgba(255,255,255,.95);border-radius:10px;padding:8px 10px;font-size:14px;box-shadow:0 1px 6px rgba(0,0,0,.3)}
 #info{display:none;position:absolute;left:10px;right:10px;bottom:calc(24px + env(safe-area-inset-bottom));max-width:560px;max-height:60%;overflow:auto;z-index:1200;background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 4px 20px rgba(0,0,0,.35);font-size:14px;line-height:1.45}
 #info h3{margin:0 0 6px}#info .x{float:right;font-size:22px;border:0;background:none}
@@ -110,8 +111,12 @@ const tierOf=p=>{const o=(p.OWNER||'').trim(),h=(p.HYDRO_ORDER||'').toUpperCase(
  if((o==='SFWMD'&&h==='PRIMARY')||/^C-\d/.test(n))return 1;if(o||h==='PRIMARY'||h==='SECONDARY')return 2;return 3};
 const TIER={1:{c:'#ff2d2d',w:6,o:1,name:'Major canal'},2:{c:'#ffc400',w:3.5,o:.95,name:'Secondary canal'},3:{c:'#9befff',w:1.6,o:.75,name:'Small canal or ditch'}};
 const zf=()=>{const z=map.getZoom();return Math.max(.45,Math.min(1.7,.45+(z-9)*.22))};
+/* water line strength: see-through amount is remembered on this device (default 40% see-through = 60% solid) */
+let wOp=(()=>{const v=parseFloat(localStorage.getItem('pbgWaterOp'));return isFinite(v)&&v>=.2&&v<=1?v:.6})();
+/* at close zoom the centerlines get thinner so the real water and the water polygons show through */
+const closeW=n=>{const z=map.getZoom();return z>=17?[3,2.2,1.6][n-1]:z>=16?[4,2.8,1.8][n-1]:null};
 const canvas=L.canvas({padding:.3,tolerance:6});
-const lineStyle=n=>({color:TIER[n].c,weight:Math.max(1,TIER[n].w*zf()),opacity:TIER[n].o,lineCap:'round'});
+const lineStyle=n=>({color:TIER[n].c,weight:closeW(n)||Math.max(1,TIER[n].w*zf()),opacity:TIER[n].o*wOp,lineCap:'round',smoothFactor:map.getZoom()>=15?.3:.8});
 const small=L.featureGroup().addTo(map),secondary=L.featureGroup().addTo(map),major=L.featureGroup().addTo(map),nhd=L.featureGroup();
 const cpoly=L.featureGroup().addTo(map),lakes=L.featureGroup().addTo(map),st=L.featureGroup().addTo(map),city=L.featureGroup().addTo(map),npb=L.featureGroup(),ring=L.featureGroup().addTo(map);
 [small,secondary,major,nhd].forEach(g=>g.bringToFront&&0);
@@ -165,22 +170,31 @@ async function cget(u){if(mem.has(u))return mem.get(u);let j=null;
   if(j.status==='error'||j.messages)throw new Error((j.messages||[]).join(' ')||'service error');
   try{if(window.caches&&txt.length<6e6){const c=await caches.open(CK);await c.put(u,new Response(txt,{headers:{'content-type':'application/json','x-t':String(Date.now())}}))}}catch(e){}}
  mem.set(u,j);return j}
-function qurl(s,p){return s.url+'/query?'+new URLSearchParams(Object.assign({outFields:s.fields,outSR:4326,geometryPrecision:5,returnGeometry:true,f:'geojson'},p))}
-async function pageAll(s,base,cap){let out=[],off=0;const n=s.page||1000;while(out.length<cap){const j=await cget(qurl(s,Object.assign({},base,{resultOffset:off,resultRecordCount:n})));const f=j.features||[];out=out.concat(f);
+function qurl(s,p){return s.url+'/query?'+new URLSearchParams(Object.assign({outFields:s.fields+(s.kind==='point'?'':',OBJECTID'),outSR:4326,geometryPrecision:5,returnGeometry:true,f:'geojson'},p))}
+async function pageAll(s,base,cap){let out=[],off=0;const n=s.page||1000;while(out.length<cap){const j=await cget(qurl(s,Object.assign({},base,{resultOffset:off,resultRecordCount:n},s.kind==='point'?{}:{orderByFields:'OBJECTID'})));const f=j.features||[];out=out.concat(f);
   const more=j.exceededTransferLimit||(j.properties&&j.properties.exceededTransferLimit);if(!f.length||!more)break;off+=f.length}return out.slice(0,cap)}
 const groupOf=s=>s.group==='area'?cpoly:s.group==='npb'?npb:s.group==='nhd'?nhd:s.group==='lakes'?lakes:s.group==='city'?city:s.group==='pbc'?null:null;
 const loaded={};/* id -> array of layers */
-function addFeatures(s,feats,seq){if(seq!==loadSeq)return 0;const keep=[];
- feats.forEach(f=>{if(!f.geometry)return;const p=Object.assign(s.norm(f.properties||{}),{_src:s.id});f.properties=p;
+const fidx=new Map();/* source:feature id -> layers, so full resolution copies can replace generalized ones */
+function addFeatures(s,feats,seq,hi){if(seq!==loadSeq)return 0;const keep=[];
+ feats.forEach(f=>{if(!f.geometry)return;const fid=f.id!=null?f.id:f.properties&&f.properties.OBJECTID;const fk=fid!=null?s.id+':'+fid:null;let mine=null;
+  if(fk&&fidx.has(fk)){const o=fidx.get(fk);if(!hi||o.hi)return;o.ls.forEach(([g,l])=>g.removeLayer(l))}
+  if(fk){mine={hi:!!hi,ls:[]};fidx.set(fk,mine)}const k0=keep.length;const p=Object.assign(s.norm(f.properties||{}),{_src:s.id});f.properties=p;
   if(s.kind==='line'){const n=s.tier?s.tier(p):3;p._tier=n;const g=s.group==='nhd'?nhd:n===1?major:n===2?secondary:small;
    L.geoJSON(f,{renderer:canvas,style:()=>lineStyle(n),onEachFeature:(ff,l)=>{l.bindPopup(()=>pop([['Canal or waterway',tc(p.NAME)||'Unnamed canal or stream'],['Also called',tc(p.ALIAS)],['Type',p.TYPE],['Size class',TIER[n].name],['Drainage order',tc(p.HYDRO_ORDER)],['Run by',p.OWNER]],s.label+', '+s.agency))}}).eachLayer(l=>{g.addLayer(l);keep.push([g,l])})}
   else if(s.kind==='point'){const c=f.geometry.coordinates;if(!c)return;const m=L.circleMarker([c[1],c[0]],{radius:6,color:'#000',weight:2,fillColor:'#ff9500',fillOpacity:1}).bindPopup(()=>pop([['Water control structure',structName(p.NAME)],['Type',tc(p.TYPE)],['Purpose',p.PURPOSE],['On canal',p.CANAL],['Operated by',p.OPER]],s.label));m._sname=p.NAME;m.feature=f;st.addLayer(m);keep.push([st,m])}
   else{let g=groupOf(s);let style={color:'#ffffff',weight:1.2,opacity:.85,fillColor:'#38d9c9',fillOpacity:.55};
    if(s.group==='pbc'){const ty=p.TYPE;const water=['ICWW','OCEAN','RIVER','CANAL','INLET'].includes(ty);g=water?cpoly:lakes;if(water)style={color:ty==='OCEAN'||ty==='ICWW'?'#0040ff':'#1e90ff',weight:1,fillColor:ty==='OCEAN'||ty==='ICWW'?'#0050ff':'#3aa0ff',fillOpacity:.55}}
    if(s.group==='area')style={color:'#1e90ff',weight:1,fillColor:'#3aa0ff',fillOpacity:.5};if(s.group==='npb')style={color:'#b04dff',weight:1,fillColor:'#b04dff',fillOpacity:.12};if(s.group==='city')style={color:'#fff',weight:3,dashArray:'8 6',fill:false};
-   L.geoJSON(f,{style:()=>style,interactive:s.group!=='city',onEachFeature:(ff,l)=>{if(s.group!=='city')l.bindPopup(()=>pop([[s.group==='npb'?'District':g===cpoly?'Water body':'Lake or pond',tc(p.NAME)||'Unnamed'],['Type',p.TYPE==='ICWW'?'Intracoastal Waterway':tc(p.TYPE)],['Class',tc(p.CLASS)],['Website',p.WEBSITE]],s.label+', '+s.agency))}}).eachLayer(l=>{g.addLayer(l);keep.push([g,l])})}});
+   const bs=style;L.geoJSON(f,{style:()=>polyStyle(bs),smoothFactor:.3,interactive:s.group!=='city',onEachFeature:(ff,l)=>{if(s.group!=='city')l.bindPopup(()=>pop([[s.group==='npb'?'District':g===cpoly?'Water body':'Lake or pond',tc(p.NAME)||'Unnamed'],['Type',p.TYPE==='ICWW'?'Intracoastal Waterway':tc(p.TYPE)],['Class',tc(p.CLASS)],['Website',p.WEBSITE]],s.label+', '+s.agency))}}).eachLayer(l=>{l._bs=bs;g.addLayer(l);keep.push([g,l])})}
+  if(mine)mine.ls=keep.slice(k0)});
  (loaded[s.id]=loaded[s.id]||[]).push(...keep);return keep.length}
-function clearData(){Object.keys(loaded).forEach(k=>{loaded[k].forEach(([g,l])=>g.removeLayer(l));loaded[k]=[]});detailDone.clear();markGraphDirty()}
+function polyStyle(b){if(b.fill===false)return b;return Object.assign({},b,{opacity:Math.min(1,(b.opacity==null?1:b.opacity)*wOp/.6*.9),fillOpacity:Math.min(.85,(b.fillOpacity==null?.2:b.fillOpacity)*wOp/.6)})}
+function applyOpacity(){[[small,3],[secondary,2],[major,1]].forEach(([g,n])=>g.setStyle(lineStyle(n)));nhd.eachLayer(l=>l.setStyle(lineStyle(l.feature.properties._tier)));
+ [cpoly,lakes,npb].forEach(g=>g.eachLayer(l=>{if(l._bs)l.setStyle(polyStyle(l._bs))}));pathG.eachLayer(l=>{if(l._po!=null&&l.setStyle)l.setStyle({opacity:pathOp(l._po)})})}
+/* the path highlight stays a bit stronger than the background lines */
+const pathOp=b=>Math.min(1,b*Math.min(1,wOp+.35));
+function clearData(){Object.keys(loaded).forEach(k=>{loaded[k].forEach(([g,l])=>g.removeLayer(l));loaded[k]=[]});detailDone.clear();fidx.clear();hiDone.clear();markGraphDirty()}
 const status=document.getElementById('lstat');
 function renderStatus(){const v=Object.values(S);const busy=v.filter(x=>x.state==='loading').length,err=SRC.filter(s=>S[s.id].state==='error'),done=v.filter(x=>x.state==='ok'||x.state==='none').length;
  status.innerHTML=busy?'<span class="spin"></span> Loading water data within '+radiusMi+' miles of '+esc(centerLabel)+' ('+done+' of '+SRC.length+' sources)':
@@ -207,7 +221,7 @@ async function loadArea(){const seq=++loadSeq;clearData();ring.clearLayers();
  const district=(S.sfwmd_canals.n||0)+(S.sjr_edge.n||0);if(district>1500){map.removeLayer(nhd)}else nhd.addTo(map);
  markGraphDirty();renderStatus();loadDetail()}
 /* detail tiles: small canals and lakes for the current view, only inside the circle, when zoomed in */
-const detailDone=new Set();const TS=.04;
+const detailDone=new Set(),hiDone=new Set();const TS=.04,HS=.01;
 async function loadDetail(){if(map.getZoom()<13)return;const seq=loadSeq;const b=map.getBounds();const R=radiusMi*1609.34;
  const tiles=[];for(let y=Math.floor(b.getSouth()/TS);y<=Math.floor(b.getNorth()/TS);y++)for(let x=Math.floor(b.getWest()/TS);x<=Math.floor(b.getEast()/TS);x++){const tb=L.latLngBounds([y*TS,x*TS],[(y+1)*TS,(x+1)*TS]);
   const near=L.latLng(Math.max(tb.getSouth(),Math.min(center.lat,tb.getNorth())),Math.max(tb.getWest(),Math.min(center.lng,tb.getEast())));if(center.distanceTo(near)<=R)tiles.push([x+','+y,tb])}
@@ -215,7 +229,12 @@ async function loadDetail(){if(map.getZoom()<13)return;const seq=loadSeq;const b
   S[s.id].state='loading';renderStatus();
   pageAll(s,{where:s.detail,geometry:[tb.getWest(),tb.getSouth(),tb.getEast(),tb.getNorth()].map(v=>v.toFixed(4)).join(','),geometryType:'esriGeometryEnvelope',inSR:4326,spatialRel:'esriSpatialRelIntersects',maxAllowableOffset:.00002},4000)
    .then(f=>{f=f.filter(ff=>{const g=ff.geometry;if(!g)return false;const c=g.type==='Point'?g.coordinates:(g.coordinates.flat(3).length?[g.coordinates.flat(3)[0],g.coordinates.flat(3)[1]]:null);return c&&center.distanceTo([c[1],c[0]])<=R+2000});const n=addFeatures(s,f,seq);S[s.id].n+=n;S[s.id].state=S[s.id].n?'ok':'none';markGraphDirty()})
-   .catch(e=>{detailDone.delete(key);S[s.id].state=S[s.id].n?'ok':'error';S[s.id].msg=e.message}).finally(renderStatus)}}
+   .catch(e=>{detailDone.delete(key);S[s.id].state=S[s.id].n?'ok':'error';S[s.id].msg=e.message}).finally(renderStatus)}
+ /* zoom 15 and closer: swap the generalized whole area lines and polygons for full resolution copies in view */
+ if(map.getZoom()>=15){const vb=map.getBounds().pad(.15);for(let y=Math.floor(vb.getSouth()/HS);y<=Math.floor(vb.getNorth()/HS);y++)for(let x=Math.floor(vb.getWest()/HS);x<=Math.floor(vb.getEast()/HS);x++){const tb=L.latLngBounds([y*HS,x*HS],[(y+1)*HS,(x+1)*HS]);
+  for(const s of SRC){if(s.kind==='point'||!s.radius||s.group==='city'||s.group==='npb'||S[s.id].state==='error'||S[s.id].state==='skip'||!S[s.id].n)continue;if(s.county==='pbc'&&!PBCBOX.intersects(tb))continue;const key=s.id+'|'+x+','+y;if(hiDone.has(key))continue;hiDone.add(key);
+   pageAll(s,{where:s.radius,geometry:[tb.getWest(),tb.getSouth(),tb.getEast(),tb.getNorth()].map(v=>v.toFixed(4)).join(','),geometryType:'esriGeometryEnvelope',inSR:4326,spatialRel:'esriSpatialRelIntersects',maxAllowableOffset:.000005,geometryPrecision:6},2000)
+    .then(f=>{addFeatures(s,f,seq,true);markGraphDirty()}).catch(()=>hiDone.delete(key))}}}}
 let dTimer=null;map.on('moveend',()=>{clearTimeout(dTimer);dTimer=setTimeout(loadDetail,400)});
 window.setArea=(ll,label,keepView)=>{center=L.latLng(ll);centerLabel=label||'the selected spot';try{localStorage.setItem('pbgArea',JSON.stringify({lat:center.lat,lng:center.lng,label:centerLabel}))}catch(e){};loadArea()};
 function setRadius(r){radiusMi=r;try{localStorage.setItem('pbgRadius',String(r))}catch(e){};document.querySelectorAll('.rad button').forEach(b=>b.classList.toggle('on',+b.dataset.r===r));loadArea()}
@@ -226,7 +245,11 @@ const labels=L.layerGroup().addTo(map);
 const layersCtl=L.control.layers({'Satellite':satg,'Street map':osm},{'Street names and places':streetLabels,'Major canals':major,'Secondary canals':secondary,'Small canals and ditches':small,'Statewide NHD streams and canals':nhd,'Canal and river water areas':cpoly,'Lakes and ponds':lakes,'Water control structures':st,'Search radius circle':ring,'Palm Beach Gardens city limit':city,'NPBCID district':npb,'Palm Beach Gardens route labels':labels},{collapsed:true,position:'bottomright'});
 L.control.zoom({position:'bottomright'}).addTo(map);
 layersCtl.addTo(map);
-(()=>{const c=layersCtl.getContainer();L.DomEvent.off(c,{mouseenter:layersCtl._expandSafely,mouseleave:layersCtl.collapse},layersCtl);const b=L.DomUtil.create('button','lc-close',layersCtl._section);b.type='button';b.textContent='Done';b.onclick=e=>{L.DomEvent.stop(e);layersCtl.collapse()};layersCtl._layersLink.setAttribute('aria-label','Map layers');const ex=layersCtl.expand;layersCtl.expand=function(){ex.call(this);const s=this._section,h=document.getElementById('hdr').getBoundingClientRect().bottom,cb=c.getBoundingClientRect().bottom;s.style.height='';s.style.maxHeight=Math.max(160,cb-h-24)+'px';s.style.overflowY='auto';return this};document.addEventListener('pointerdown',e=>{if(!c.contains(e.target))layersCtl.collapse()},true)})();
+(()=>{const c=layersCtl.getContainer();L.DomEvent.off(c,{mouseenter:layersCtl._expandSafely,mouseleave:layersCtl.collapse},layersCtl);const b=L.DomUtil.create('button','lc-close',layersCtl._section);b.type='button';b.textContent='Done';b.onclick=e=>{L.DomEvent.stop(e);layersCtl.collapse()};layersCtl._layersLink.setAttribute('aria-label','Map layers');const ex=layersCtl.expand;layersCtl.expand=function(){ex.call(this);const s=this._section,h=document.getElementById('hdr').getBoundingClientRect().bottom,cb=c.getBoundingClientRect().bottom;s.style.height='';s.style.maxHeight=Math.max(160,cb-h-24)+'px';s.style.overflowY='auto';return this};document.addEventListener('pointerdown',e=>{if(!c.contains(e.target))layersCtl.collapse()},true);
+ const op=L.DomUtil.create('div','opbox',layersCtl._section);op.innerHTML='<label for="wop"><b>Line see-through</b> <span id="wopv"></span></label><input id="wop" type="range" min="0" max="80" step="5" aria-label="How see-through the water lines are"><div class="opk"><span>Solid</span><span>Very see-through</span></div>';
+ layersCtl._section.insertBefore(op,b);L.DomEvent.disableClickPropagation(op);
+ const r=op.querySelector('input'),v=op.querySelector('#wopv');const sh=()=>{v.textContent=Math.round((1-wOp)*100)+'%'};r.value=Math.round((1-wOp)*100);sh();
+ r.addEventListener('input',()=>{wOp=1-(+r.value)/100;sh();applyOpacity();try{localStorage.setItem('pbgWaterOp',String(wOp))}catch(e){}})})();
 const lg=L.control({position:'bottomleft'});lg.onAdd=()=>{const w=L.DomUtil.create('div');L.DomEvent.disableClickPropagation(w);const b=L.DomUtil.create('button','lgbtn',w);const d=L.DomUtil.create('div','lg',w);const set=o=>{d.style.display=o?'block':'none';b.textContent=o?'Hide legend':'Show legend'};set(innerWidth>600);b.onclick=()=>set(d.style.display==='none');d.innerHTML='<b>Waterway size</b><br><i class="sw"><s style="height:6px;background:#ff2d2d"></s></i>Major canal<br><i class="sw"><s style="height:3.5px;background:#ffc400"></s></i>Secondary canal<br><i class="sw"><s style="height:1.6px;background:#9befff;opacity:.85"></s></i>Small canal or ditch<br><i class="sw" style="background:#38d9c9;border:1px solid #fff;outline:1px solid #888"></i>Lake or pond<br><i class="sw" style="background:#0050ff"></i>Intracoastal or ocean<br><i class="sw"><s style="height:0;border-top:3px dashed #fff"></s></i>City limit<br><i class="sw"><s style="height:0;border-top:2px dashed #fff"></s></i>Search radius<br><span style="color:#ff9500;font-size:15px">&#9679;</span> Control structure<br><span style="color:#666;font-size:11px">Line size comes from the official owner and drainage order fields.</span>';return w};lg.addTo(map);
 L.control.scale().addTo(map);
 function show(id){['info','disc','route'].forEach(k=>document.getElementById(k).style.display=k===id?'block':'none')}
@@ -296,12 +319,44 @@ function walkSF(start,fromLL){const seen=new Set(),pts=[],names=[];let e=start.e
   c.sort((a,b)=>((b.p.NAME&&b.p.NAME===e.p.NAME)-(a.p.NAME&&a.p.NAME===e.p.NAME))||(a.tier-b.tier));e=c[0];idx=pts.length;pts.push(...e.ll.slice(1))}
  return {pts,names,end:pts[pts.length-1]}}
 function canalLabel(p){const n=tc(p.NAME);return p.ALIAS?n+' ('+tc(p.ALIAS)+')':n}
+const LONGGAP=600;/* connections longer than this are not drawn as a line across land */
 const RANK={'Official flowline':3,'Likely':2,'Assumed':1};
 async function nhdFrom(ll){const pos=await J(NLDI+'position?f=json&coords='+encodeURIComponent('POINT('+ll.lng.toFixed(5)+' '+ll.lat.toFixed(5)+')'));const f0=pos.features&&pos.features[0];if(!f0)throw new Error('no flowline');
  const comid=f0.properties.comid||f0.properties.identifier;const dm=await J(NLDI+comid+'/navigation/DM/flowlines?f=json&distance=1500');const fl=dm.features||[];
  let attrs={},wb={};try{const ids=fl.map(f=>f.properties.nhdplus_comid).join(',');const j=await J(EPA2+'#'+ids.length+ids.slice(0,40),{method:'POST',body:new URLSearchParams({where:'comid in ('+ids+')',outFields:'comid,gnis_name,tidal,wbareacomid',returnGeometry:'false',f:'json'})});(j.features||[]).forEach(x=>attrs[x.attributes.comid]=x.attributes);
   const w=[...new Set(Object.values(attrs).map(a=>a.wbareacomid).filter(x=>x>0))];if(w.length){const k=await J(EPA4+'#'+w.join(','),{method:'POST',body:new URLSearchParams({where:'comid in ('+w.join(',')+')',outFields:'comid,gnis_name',returnGeometry:'false',f:'json'})});(k.features||[]).forEach(x=>wb[x.attributes.comid]=x.attributes.gnis_name)}}catch(e){}
  const pts=[];fl.forEach(f=>{const g=f.geometry,c=g.type==='MultiLineString'?g.coordinates.flat():g.coordinates;const a=attrs[f.properties.nhdplus_comid]||{};c.forEach(xy=>pts.push({ll:L.latLng(xy[1],xy[0]),n:a.gnis_name||wb[a.wbareacomid]||null,tidal:a.tidal===1}))});return pts}
+/* Water only routing to a real inlet: an undirected graph of statewide NHD flowlines (canals, streams, rivers and the
+   paths through bays and the Intracoastal), searched with Dijkstra. Small breaks in the data (150 m or less) may be
+   bridged and are marked Assumed. It never draws a straight line across land to the coast. */
+async function waterRoute(from,cands,back){if(!cands.length)return null;back=back&&back.length?back:[from];
+ const b=L.latLngBounds([from,...cands.map(n=>[n[1],n[2]])]).pad(.1);const pad=.02;
+ const env=[b.getWest()-pad,b.getSouth()-pad,b.getEast()+pad,b.getNorth()+pad].map(v=>v.toFixed(4)).join(',');
+ const src={url:DEP+'4',fields:'GNIS_NAME,FTYPE',kind:'line',page:2000};
+ let feats=[];try{feats=await pageAll(src,{where:'FTYPE IN (558,460,336)',geometry:env,geometryType:'esriGeometryEnvelope',inSR:4326,spatialRel:'esriSpatialRelIntersects',maxAllowableOffset:.00003},12000)}catch(e){return null}
+ const cl=Math.cos(from.lat*Math.PI/180),dm=(a,b)=>{const x=(a[0]-b[0])*111320*cl,y=(a[1]-b[1])*110540;return Math.sqrt(x*x+y*y)};
+ const key=c=>Math.round(c[0]*1e4)+','+Math.round(c[1]*1e4);const node=new Map(),adj=new Map();
+ const find=c=>{const [x,y]=key(c).split(',').map(Number);for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++){const k=(x+dx)+','+(y+dy);if(node.has(k))return k}const k=x+','+y;node.set(k,c);adj.set(k,[]);return k};
+ const link=(a,b,w,gap,n)=>{if(a===b)return;adj.get(a).push([b,w,gap,n]);adj.get(b).push([a,w,gap,n])};
+ feats.forEach(f=>{const g=f.geometry;if(!g)return;const parts=g.type==='MultiLineString'?g.coordinates:[g.coordinates];const n=f.properties&&f.properties.GNIS_NAME||null;
+  parts.forEach(cs=>{let prev=null;cs.forEach(c=>{const k=find(c);if(prev&&prev!==k)link(prev,k,dm(node.get(prev),node.get(k)),false,n);prev=k})})});
+ if(!node.size)return null;
+ /* bridge short breaks: dead ends to the nearest other node within 150 m */
+ const cell=new Map();node.forEach((c,k)=>{const ck=Math.floor(c[0]/.002)+','+Math.floor(c[1]/.002);if(!cell.has(ck))cell.set(ck,[]);cell.get(ck).push(k)});
+ node.forEach((c,k)=>{if(adj.get(k).length!==1)return;const cx=Math.floor(c[0]/.002),cy=Math.floor(c[1]/.002);let best=null;const nb=new Set([k,adj.get(k)[0][0]]);
+  for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++)(cell.get((cx+dx)+','+(cy+dy))||[]).forEach(o=>{if(nb.has(o))return;const d=dm(c,node.get(o));if(d<=150&&(!best||d<best.d))best={o,d}});
+  if(best)link(k,best.o,best.d*4+50,true,null)});
+ const nearest=(ll,max)=>{const c=[ll.lng,ll.lat];let b=null;node.forEach((v,k)=>{const d=dm(c,v);if(d<=max&&(!b||d<b.d))b={k,d}});return b};
+ let s0=null,bi=0;back.forEach((ll,i)=>{if(s0&&s0.d<15)return;const r=nearest(ll,300);if(r&&(!s0||r.d<s0.d-5)){s0=r;bi=i}});if(!s0)return null;
+ const tg=new Map();cands.forEach(n=>{const t=nearest(L.latLng(n[1],n[2]),1500);if(t)tg.set(t.k,{n,d:t.d})});if(!tg.size)return null;
+ /* Dijkstra with a small binary heap */
+ const dist=new Map([[s0.k,0]]),prev=new Map(),H=[[0,s0.k]];const push=x=>{H.push(x);let i=H.length-1;while(i){const p=(i-1)>>1;if(H[p][0]<=H[i][0])break;[H[p],H[i]]=[H[i],H[p]];i=p}};
+ const pop=()=>{const top=H[0],last=H.pop();if(H.length){H[0]=last;let i=0;for(;;){const l=2*i+1,r=l+1;let m=i;if(l<H.length&&H[l][0]<H[m][0])m=l;if(r<H.length&&H[r][0]<H[m][0])m=r;if(m===i)break;[H[m],H[i]]=[H[i],H[m]];i=m}}return top};
+ let hit=null;while(H.length){const [d,k]=pop();if(d>dist.get(k))continue;if(tg.has(k)){hit=k;break}if(d>400000)break;for(const [o,w,gap,n] of adj.get(k)){const nd=d+w;if(nd<(dist.has(o)?dist.get(o):1e18)){dist.set(o,nd);prev.set(o,[k,gap,n]);push([nd,o])}}}
+ if(!hit)return null;const path=[],gaps=[],names=[];let k=hit;while(k!==s0.k){const [p,gap,n]=prev.get(k);const a=node.get(p),c=node.get(k);if(gap)gaps.push([L.latLng(a[1],a[0]),L.latLng(c[1],c[0])]);if(n)names.push(n);path.push(L.latLng(c[1],c[0]));k=p}
+ path.push(L.latLng(node.get(s0.k)[1],node.get(s0.k)[0]));path.reverse();names.reverse();
+ return {pts:path,gaps,names:[...new Set(names)],inlet:tg.get(hit).n,endGap:tg.get(hit).d,startGap:s0.d,backIdx:bi}}
+const nearInlets=(ll,km,n)=>INLETS.map(x=>[x,map.distance(ll,[x[1],x[2]])]).filter(x=>x[1]<=km*1000).sort((a,b)=>a[1]-b[1]).slice(0,n).map(x=>x[0]);
 function cutAtInlet(lls){for(let i=0;i<lls.length;i++){for(const n of INLETS){const r=i===lls.length-1?6000:2500;if(map.distance(lls[i],[n[1],n[2]])<r)return {i,inlet:n}}}return null}
 async function trace(tap){pathG.clearLayers();map.closePopup();rtShow('<h3>Path to the ocean</h3><p>Finding the nearest water and tracing it downstream...</p>');
  const steps=[],hops=[];const push=(n,c)=>{if(n&&!steps.some(x=>x.n===n))steps.push({n,c})};
@@ -312,32 +367,43 @@ async function trace(tap){pathG.clearLayers();map.closePopup();rtShow('<h3>Path 
  if(s)push(s.k==='lake'?(s.name==='Unnamed lake or pond'?'Your lake or pond':s.name+' (lake)'):s.name,s.k==='lake'?'Assumed':'Official flowline');
  let line=[],dashed=[];
  /* 1. SFWMD network where we have it */
- let sf=null;if(!G)buildGraph();
+ let sf=null;if(!G)buildGraph();const sfMark={steps:steps.length,hops:hops.length};
  if(G.edges.length){const ne=(s&&s.k==='canal')?nearestEdge(P,60):nearestEdge(P,s&&s.k==='water'?400:1500);
-  if(ne){const assumed=!(s&&((s.k==='canal'&&ne.m<60)||(s.k==='water'&&ne.m<150)));if(ne.m>5){dashed.push({a:P,b:ne.p,c:assumed?'Assumed':'Likely'});if(assumed)push('Assumed pipe or culvert to '+(canalLabel(ne.e.p)||'the nearest canal'),'Assumed');hops.push(assumed?'Assumed':'Likely')}
-   sf=walkSF(ne,P);line.push(...sf.pts);const ev=sf.names.slice();sf.pts.forEach((p,i)=>{const sn=nearStruct(p);if(sn)ev.push({n:sn+' control structure',i})});ev.sort((a,b)=>a.i-b.i).forEach(x=>push(x.n,'Official flowline'));hops.push('Official flowline')}}
+  if(ne){const assumed=!(s&&((s.k==='canal'&&ne.m<60)||(s.k==='water'&&ne.m<150)));if(ne.m>5){dashed.push({a:P,b:ne.p,c:assumed?'Assumed':'Likely'});if(assumed)push('Assumed pipe or culvert to '+(canalLabel(ne.e.p)||'the nearest canal')+(ne.m>LONGGAP?' (about '+fmtD(ne.m)+', not drawn)':''),'Assumed');hops.push(assumed?'Assumed':'Likely')}
+   sf=walkSF(ne,P);const off0=line.length;line.push(...sf.pts);const c0=cutAtInlet(line),lim0=c0?c0.i-off0:1e9;const ev=sf.names.filter(x=>x.i<=lim0);sf.pts.forEach((p,i)=>{if(i>lim0)return;const sn=nearStruct(p);if(sn)ev.push({n:sn+' control structure',i})});ev.sort((a,b)=>a.i-b.i).forEach(x=>push(x.n,'Official flowline'));hops.push('Official flowline')}}
  /* 2. USGS NLDI downstream from where SFWMD ends, or from the snap point */
  let start=sf?sf.end:P,cut=cutAtInlet(line);
  if(!cut){let nh=[];try{nh=await nhdFrom(start)}catch(e){if(!line.length)return rtShow('<h3>Path to the ocean</h3><p>'+snapTxt+'</p><p class="err">The USGS routing service did not answer. Please try again in a moment.</p>')}
+  const trim=(arr,ll)=>{let bi=0,bd=1e18;arr.slice(0,400).forEach((x,i)=>{const d=map.distance(ll,x.ll);if(d<bd){bd=d;bi=i}});return arr.slice(bi)};
+  if(nh.length)nh=trim(nh,start);
+  /* if the SFWMD walk ends far from any USGS flowline, drop it and start the USGS route at the tap instead of jumping across land */
+  if(sf&&nh.length&&map.distance(start,nh[0].ll)>400){let nh2=[];try{nh2=trim(await nhdFrom(P),P)}catch(e){}
+   if(nh2.length&&map.distance(P,nh2[0].ll)<map.distance(start,nh[0].ll)){line=[];dashed=[];steps.length=sfMark.steps;hops.length=sfMark.hops;sf=null;start=P;nh=nh2}}
   if(nh.length){if(!sf&&s&&s.k==='lake'){push('Assumed pipe or culvert to the nearest mapped flowline','Assumed');hops.push('Assumed')}
-   const gap=map.distance(start,nh[0].ll);if(gap>30)dashed.push({a:start,b:nh[0].ll,c:gap<400?'Likely':'Assumed'}),hops.push(gap<400?'Likely':'Assumed');
+   const gap=map.distance(start,nh[0].ll);if(gap>30){dashed.push({a:start,b:nh[0].ll,c:gap<400?'Likely':'Assumed'});hops.push(gap<400?'Likely':'Assumed');if(gap>LONGGAP)push('Unmapped connection of about '+fmtD(gap)+' to the next mapped waterway (likely underground pipes or drainage wells), not drawn','Assumed')}
    const off=line.length;line.push(...nh.map(x=>x.ll));cut=cutAtInlet(line);const lim=cut?cut.i-off+1:nh.length;let tidal=false;nh.slice(0,Math.max(0,lim)).forEach(x=>{if(x.n)push(tc(x.n),'Official flowline');const sn=nearStruct(x.ll);if(sn)push(sn+' control structure','Official flowline');});hops.push('Official flowline')}}
  let end=line.length?line[line.length-1]:P;
- if(cut){line=line.slice(0,cut.i+1);end=L.latLng(cut.inlet[1],cut.inlet[2]);dashed.push({a:line[line.length-1],b:end,c:'Likely'});hops.push('Likely');push(cut.inlet[0],'Likely');push(cut.inlet[2]<-81.5&&cut.inlet[1]<30.5||cut.inlet[2]<-84?'Gulf of America (Gulf of Mexico)':'Atlantic Ocean','Likely')}
- else push('End of mapped flowline','Official flowline');
+ const sea=n=>n[2]<-81.5&&n[1]<30.5||n[2]<-84?'Gulf of America (Gulf of Mexico)':'Atlantic Ocean';
+ /* finish along real water to an inlet from the list, never a straight line across land */
+ let from=null,cands=[];if(cut){line=line.slice(0,cut.i+1);from=line[line.length-1];cands=[cut.inlet,...nearInlets(from,25,3).filter(x=>x!==cut.inlet)].slice(0,3)}else if(line.length){from=line[line.length-1];cands=nearInlets(from,45,3)}
+ let wr=null;if(from&&cands.length){rt.querySelector('p')&&(rt.querySelector('p').textContent='Following the water to the nearest inlet...');const back=[];let acc=0;for(let i=line.length-1;i>0&&acc<4000&&back.length<120;i--){back.push(line[i]);acc+=map.distance(line[i],line[i-1])}wr=await waterRoute(from,cands,back);if(wr&&wr.backIdx){line=line.slice(0,line.length-wr.backIdx);from=line[line.length-1]}}
+ if(wr){if(wr.startGap>30){const c=wr.startGap<=150?'Likely':'Assumed';dashed.push({a:from,b:wr.pts[0],c});hops.push(c)}line.push(...wr.pts);wr.gaps.forEach(g=>dashed.push({a:g[0],b:g[1],c:'Assumed'}));if(wr.gaps.length){hops.push('Assumed');push('Short unmapped gap bridged between two waterways','Assumed')}
+  wr.names.forEach(n=>push(tc(n),'Official flowline'));end=line[line.length-1];hops.push('Likely');push(wr.inlet[0],'Likely');push(sea(wr.inlet),'Likely');cut={inlet:wr.inlet}}
+ else if(cut){end=line[line.length-1];hops.push('Likely');push('Water near '+cut.inlet[0],'Likely');push(sea(cut.inlet),'Likely')}
+ else push('End of mapped flowline (no water route to an inlet was found)','Official flowline');
  if(s&&s.k==='lake'&&!hops.includes('Assumed'))hops.push('Assumed');
  /* draw */
- if(line.length>1){L.polyline(line,{renderer:svgR,color:'#002a9e',weight:12,opacity:.35,lineCap:'round'}).addTo(pathG);L.polyline(line,{renderer:svgR,color:'#00e1ff',weight:5,className:'flowanim',lineCap:'round'}).addTo(pathG)}
- dashed.forEach(d=>L.polyline([d.a,d.b],{renderer:svgR,color:d.c==='Assumed'?'#ff5a5a':'#ffd400',weight:4,dashArray:'6 8'}).bindTooltip(d.c==='Assumed'?'Assumed connection':'Likely connection').addTo(pathG));
+ if(line.length>1){const h=L.polyline(line,{renderer:svgR,color:'#002a9e',weight:12,opacity:pathOp(.35),lineCap:'round',smoothFactor:.3});h._po=.35;h.addTo(pathG);const a=L.polyline(line,{renderer:svgR,color:'#00e1ff',weight:5,opacity:pathOp(1),className:'flowanim',lineCap:'round',smoothFactor:.3});a._po=1;a.addTo(pathG)}
+ dashed.filter(d=>{if(map.distance(d.a,d.b)<=LONGGAP)return true;[d.a,d.b].forEach(p=>L.circleMarker(p,{renderer:svgR,radius:6,color:'#ff5a5a',weight:3,fill:false}).bindTooltip('Unmapped connection, not drawn').addTo(pathG));return false}).forEach(d=>L.polyline([d.a,d.b],{renderer:svgR,color:d.c==='Assumed'?'#ff5a5a':'#ffd400',weight:4,dashArray:'6 8'}).bindTooltip(d.c==='Assumed'?'Assumed connection':'Likely connection').addTo(pathG));
  L.circleMarker(end,{radius:8,color:'#fff',weight:3,fillColor:'#0050ff',fillOpacity:1,renderer:svgR}).addTo(pathG);
  let dist=0;for(let i=1;i<line.length;i++)dist+=map.distance(line[i-1],line[i]);dashed.forEach(d=>dist+=map.distance(d.a,d.b));
  const overall=hops.reduce((w,h)=>RANK[h]<RANK[w]?h:w,'Official flowline');
  const badge=c=>'<span class="cf cf'+c.split(' ')[0]+'">'+c+'</span>';
  const shortN=n=>n.replace(/^Your lake or pond$/,'Lake').replace(/^Earman River( Canal)?$/,'C-17').replace(/^Unnamed canal$/,'Canal').replace(/ \(lake\)$/,'').replace(/ control structure$/,'').replace(/^(C-\d+\w?) \(.*\)$/,'$1').replace(/ \(.*\)$/,'');
- const shortSteps=steps.filter(x=>!/^Assumed pipe|^End of mapped|Ocean|Gulf of/.test(x.n)).map(x=>shortN(x.n)).filter((n,i,a)=>n&&a.indexOf(n)===i);
+ const shortSteps=steps.filter(x=>!/^Assumed pipe|^End of mapped|^Unmapped|^Short unmapped|Ocean|Gulf of/.test(x.n)).map(x=>shortN(x.n.replace(/^Water near /,''))).filter((n,i,a)=>n&&a.indexOf(n)===i);
  const lastN=steps.length?steps[steps.length-1].n:'';const oneTxt=(shortSteps.length>5?[...shortSteps.slice(0,2),'...',...shortSteps.slice(-2)]:shortSteps).join(' to ')+', '+(dist/1609).toFixed(1)+' mi';
  sheetShow(badge(overall)+' '+esc(oneTxt.replace(/, [\d.]+ mi$/,'')).replace(/\b([A-Z]+-\d+\w*)/g,'<span style="white-space:nowrap">$1</span>'),(dist/1609).toFixed(1)+' mi','<p class="small"><b>Path to the ocean.</b> '+snapTxt+' Route about '+fmtD(dist)+'. Ends at '+esc(lastN)+'.</p><ol class="steps">'+steps.map(x=>'<li>'+esc(x.n)+' '+badge(x.c)+'</li>').join('')+'</ol>'+
-  '<p class="small"><b>Line key:</b> animated blue is an official flowline (SFWMD canal network with its flow direction, then USGS NHDPlus). Dashed red is an assumed connection, such as a lake to a canal through unmapped pipes. Dashed yellow is a likely connection, such as the last stretch to an inlet. Routes are estimates.</p>'+
+  '<p class="small"><b>Line key:</b> animated blue is an official flowline (SFWMD canal network with its flow direction, then USGS NHDPlus). Dashed red is an assumed connection, such as a lake to a canal through unmapped pipes. Dashed yellow is a short likely connection between two mapped waterways. Red circles mark the two ends of a longer unmapped connection, which is not drawn as a line. The route always follows mapped water to an inlet and never cuts straight across land. Routes are estimates.</p>'+
   '<button class="alt2" onclick="setTrace(true)">Trace another spot</button>');
  setMin(true,true);hdrEl.classList.add('rtmin');rtB=L.latLngBounds(line.concat([tap,end,P]));requestAnimationFrame(()=>fitRoute());
  map.attributionControl.addAttribution('Routing: SFWMD canal network, USGS NLDI and NHDPlus V2, EPA WATERS');
