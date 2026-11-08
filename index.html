@@ -24,8 +24,15 @@ html,body{margin:0;height:100%;-webkit-text-size-adjust:100%;font-family:-apple-
 .hdr .ttl{padding-right:36px}
 .hdr .pill{display:none;align-items:center;gap:10px;padding-right:40px}
 .hdr .pill button{background:#0a5bd8;color:#fff;border-radius:999px;padding:6px 14px;min-height:34px;font-size:14px;font-weight:600}
-.hdr .pill a{font-size:13px;color:#0a5bd8}
+.hdr .pill a{font-size:13px;color:#0a5bd8}.hdr .pill button.pt{background:#0b8a4a;font-size:13px;padding:6px 10px}.hdr .pill button.pt.on{background:#ffd400;color:#000}
 .hdr.min{padding:6px 8px}.hdr.min .full{display:none}.hdr.min .pill{display:flex}
+#route{display:none;position:absolute;left:10px;right:10px;bottom:calc(24px + env(safe-area-inset-bottom));max-width:560px;max-height:42%;overflow:auto;z-index:1200;background:#fff;border-radius:14px;padding:12px 14px;box-shadow:0 4px 20px rgba(0,0,0,.35);font-size:14px;line-height:1.45}
+#route h3{margin:0 0 6px;font-size:16px}#route .x{float:right;font-size:24px;border:0;background:none;min-width:40px;min-height:40px}
+#route .sum{font-weight:600;margin:6px 0}#route details summary{color:#0a5bd8;font-size:14px;padding:6px 0;cursor:pointer}#route .steps{padding-left:22px;margin:6px 0}#route .steps li{margin:3px 0}#route .small{color:#555;font-size:13px}#route .err{color:#b00020}
+.cf{display:inline-block;font-size:11px;font-weight:700;border-radius:999px;padding:1px 8px;vertical-align:middle;white-space:nowrap}.cfOfficial{background:#d7f5e1;color:#0b6b2e}.cfLikely{background:#fff1c2;color:#7a5600}.cfAssumed{background:#ffe0e0;color:#9b1c1c}
+.alt2{border:0;background:#0a5bd8;color:#fff;border-radius:8px;padding:10px 14px;font-size:15px;margin-top:4px}
+.hdr button#trace{background:#0b8a4a}.hdr button#trace.on{background:#ffd400;color:#000;box-shadow:0 0 0 3px #000 inset}
+.flowanim{stroke-dasharray:14 10;animation:flow 1.1s linear infinite}@keyframes flow{to{stroke-dashoffset:-24}}
 .credit{margin-top:6px;font-size:13px;color:#333}.credit b{font-size:13px}
 #disc{position:absolute;left:10px;right:10px;bottom:calc(24px + env(safe-area-inset-bottom));max-height:45%;overflow:auto;z-index:1200;background:#fffdf5;border:2px solid #e0b000;border-radius:14px;padding:12px 14px;box-shadow:0 4px 20px rgba(0,0,0,.35);font-size:14px;line-height:1.45;max-width:560px}
 #disc h3{margin:0 0 6px;font-size:16px}#disc .hide{float:right;border:0;background:#0a5bd8;color:#fff;border-radius:8px;padding:6px 12px;font-size:14px}
@@ -44,10 +51,12 @@ html,body{margin:0;height:100%;-webkit-text-size-adjust:100%;font-family:-apple-
 .lc-close{position:sticky;bottom:0;display:block;width:100%;margin-top:6px;border:0;background:#0a5bd8;color:#fff;border-radius:8px;padding:10px;font-size:15px}
 .leaflet-touch .leaflet-bar a,.leaflet-bar a{width:40px;height:40px;line-height:40px;font-size:22px}
 .leaflet-bottom.leaflet-right .leaflet-control{margin-right:10px}
+.leaflet-control-attribution{font-size:10px;line-height:1.3;max-width:100vw}
+@media (max-width:600px){.leaflet-bottom.leaflet-left{bottom:30px}.leaflet-bottom.leaflet-right{bottom:30px}.leaflet-bottom.leaflet-right .leaflet-control-attribution{position:fixed;right:0;bottom:0;left:0;margin:0!important;text-align:right}}
 </style></head><body><div id="map"></div>
-<div class="hdr" id="hdr"><button class="tog" id="tog" aria-label="Minimize header" aria-expanded="true" title="Minimize">&#8722;</button><div class="full ttl"><b>Palm Beach Gardens canals and lakes</b></div><div class="pill"><button id="pillbtn" aria-label="Expand header">PBG canals <span aria-hidden="true">&#9662;</span></button><a href="https://github.com/sbrandes2024/pbg-canals-map/issues/new?title=Suggestion&amp;labels=suggestion" target="_blank" rel="noopener">Suggest</a></div><div class="srch" id="srch"><form class="srow" id="sform" role="search" autocomplete="off"><input id="q" type="search" inputmode="search" enterkeyhint="search" placeholder="Address or place" aria-label="Search an address or place" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"><button type="submit" aria-label="Search">Go</button><button type="button" id="loc" class="alt" aria-label="Use my location" title="Use my location">&#9737;</button></form><ul id="res" role="listbox"></ul><div id="sstat"></div></div>
+<div class="hdr" id="hdr"><button class="tog" id="tog" aria-label="Minimize header" aria-expanded="true" title="Minimize">&#8722;</button><div class="full ttl"><b>Palm Beach Gardens canals and lakes</b></div><div class="pill"><button id="pillbtn" aria-label="Expand header">PBG canals <span aria-hidden="true">&#9662;</span></button><button id="trace2" class="pt">Path to ocean</button><a href="https://github.com/sbrandes2024/pbg-canals-map/issues/new?title=Suggestion&amp;labels=suggestion" target="_blank" rel="noopener">Suggest</a></div><div class="srch" id="srch"><form class="srow" id="sform" role="search" autocomplete="off"><input id="q" type="search" inputmode="search" enterkeyhint="search" placeholder="Address or place" aria-label="Search an address or place" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"><button type="submit" aria-label="Search">Go</button><button type="button" id="loc" class="alt" aria-label="Use my location" title="Use my location">&#9737;</button></form><ul id="res" role="listbox"></ul><div id="sstat"></div></div>
 <div class="full"><span style="color:#555;font-size:13px">Tap any canal, lake or marker for details</span>
-<div class="btns"><button onclick="show('info')">How the water reaches the ocean</button><button class="alt" onclick="show('disc')">Disclaimer and sources</button></div>
+<div class="btns"><button id="trace" aria-pressed="false">Path to the ocean</button><button onclick="show('info')">How the water reaches the ocean</button><button class="alt" onclick="show('disc')">Disclaimer and sources</button></div>
 <div class="credit">A project by <b>Steve Brandes</b> &middot; <a href="https://github.com/sbrandes2024/pbg-canals-map/issues/new?title=Suggestion&amp;labels=suggestion" target="_blank" rel="noopener">Send a suggestion</a></div></div></div>
 <div id="info"><button class="x" onclick="info.style.display='none'">&times;</button><h3>Main drainage routes</h3>
 <p><b>1. Neighborhood lakes.</b> Many lakes and ponds in Palm Beach Gardens neighborhoods are stormwater lakes. They are linked by underground pipes, culverts and small canals, many run by the Northern Palm Beach County Improvement District (NPBCID, shaded purple, toggle it on). Those underground pipes are not on this map, so it cannot tell you which outlet a particular lake uses.</p>
@@ -59,10 +68,12 @@ html,body{margin:0;height:100%;-webkit-text-size-adjust:100%;font-family:-apple-
 <li>The county water body data is several years old. The newest record change in this area is from June 2022.</li>
 <li>The route labels on the map (for example "C-17 Earman River &rarr; Intracoastal") were placed by hand as a guide. They are not official GIS features.</li></ul>
 <p style="color:#666;font-size:13px">Which route a given lake uses depends on its local district permit and pipes. Confirm with NPBCID (npbcid.org) or the city before relying on it.<br><br>Sources: SFWMD Water Management System GIS (canals, structures, special districts); Palm Beach County Engineering water bodies and municipal boundaries. Basemaps: Esri World Imagery, OpenStreetMap.</p></div>
+<div id="route"></div>
 <div id="disc"><button class="hide" onclick="hide('disc')">Hide</button><h3>About this map</h3>
 <div>A project by <b>Steve Brandes</b></div>
 <p class="sugg">Have a suggestion or spot something wrong? Please let us know!<br><a class="sbtn" href="https://github.com/sbrandes2024/pbg-canals-map/issues/new?title=Suggestion&amp;labels=suggestion" target="_blank" rel="noopener">Send a suggestion</a></p>
 <p><b>Disclaimer.</b> This map uses the most recent publicly available data we could find from the listed sources. Some records may be outdated, and waterways, structures, and drainage connections may have changed since they were mapped. Connections may be incomplete or unverified. For general reference only, not for navigation, flood risk assessment, or engineering decisions.</p>
+<p class="small"><b>Path to the ocean routes are estimates.</b> They follow official USGS flowlines where they exist, and any hop from a lake to a canal is assumed because underground pipes are not mapped.</p>
 <p class="small"><b>Known gaps:</b> underground pipe connections are missing, the county water body data is several years old, and the route labels were placed by hand.</p>
 <p class="small"><b>Data dates:</b></p><ul class="small">
 <li>SFWMD canals and water control structures: metadata last modified October 28, 2025. Newest structure start date in the layer: September 1, 2025.</li>
@@ -104,7 +115,7 @@ const city=L.geoJSON(D.pbg,{style:{color:'#fff',weight:3,dashArray:'8 6',fill:fa
 const npb=L.geoJSON(D.npbcid,{style:{color:'#b04dff',weight:1,fillColor:'#b04dff',fillOpacity:.12},onEachFeature:(f,l)=>l.bindPopup(pop([['District','Northern Palm Beach County Improvement District'],['Website',f.properties.WEBSITE]],'SFWMD special districts'))});
 const st=L.layerGroup();
 D.struct.features.concat(D.struct2.features).forEach(f=>{const p=f.properties,c=f.geometry.coordinates;
- L.circleMarker([c[1],c[0]],{radius:6,color:'#000',weight:2,fillColor:'#ff9500',fillOpacity:1}).bindPopup(pop([['Water control structure',p.NAME],['Type',tc(p.STRUCTURETYPE)],['On canal',p.CANAL],['Operated by',p.OPER_MAINT]],'SFWMD structures')).addTo(st)});
+ L.circleMarker([c[1],c[0]],{radius:6,color:'#000',weight:2,fillColor:'#ff9500',fillOpacity:1}).bindPopup(pop([['Water control structure',p.NAME],['Type',tc(p.STRUCTURETYPE)],['On canal',p.CANAL],['Operated by',p.OPER_MAINT]],'SFWMD structures')).addTo(st)._sname=p.NAME});
 st.addTo(map);
 const labels=L.layerGroup().addTo(map);
 [[26.822,-80.07,'C-17 Earman River → Intracoastal'],[26.925,-80.16,'C-18 → Loxahatchee'],[26.945,-80.085,'Jupiter Inlet → Ocean'],[26.775,-80.075,'Lake Worth Lagoon (Intracoastal)']].forEach(a=>L.marker([a[0],a[1]],{opacity:0,interactive:false}).bindTooltip(a[2],{permanent:true,className:'lbl',direction:'center'}).addTo(labels));
@@ -114,10 +125,103 @@ layersCtl.addTo(map);
 (()=>{const c=layersCtl.getContainer();L.DomEvent.off(c,{mouseenter:layersCtl._expandSafely,mouseleave:layersCtl.collapse},layersCtl);const b=L.DomUtil.create('button','lc-close',layersCtl._section);b.type='button';b.textContent='Done';b.onclick=e=>{L.DomEvent.stop(e);layersCtl.collapse()};layersCtl._layersLink.setAttribute('aria-label','Map layers');const ex=layersCtl.expand;layersCtl.expand=function(){ex.call(this);const s=this._section,h=document.getElementById('hdr').getBoundingClientRect().bottom,cb=c.getBoundingClientRect().bottom;s.style.height='';s.style.maxHeight=Math.max(160,cb-h-24)+'px';s.style.overflowY='auto';return this};document.addEventListener('pointerdown',e=>{if(!c.contains(e.target))layersCtl.collapse()},true)})();
 const lg=L.control({position:'bottomleft'});lg.onAdd=()=>{const w=L.DomUtil.create('div');L.DomEvent.disableClickPropagation(w);const b=L.DomUtil.create('button','lgbtn',w);const d=L.DomUtil.create('div','lg',w);const set=o=>{d.style.display=o?'block':'none';b.textContent=o?'Hide legend':'Show legend'};set(innerWidth>600);b.onclick=()=>set(d.style.display==='none');d.innerHTML='<b>Waterway size</b><br><i class="sw"><s style="height:6px;background:#ff2d2d"></s></i>Major canal<br><i class="sw"><s style="height:3.5px;background:#ffc400"></s></i>Secondary canal<br><i class="sw"><s style="height:1.6px;background:#9befff;opacity:.85"></s></i>Small canal or ditch<br><i class="sw" style="background:#38d9c9;border:1px solid #fff;outline:1px solid #888"></i>Lake or pond<br><i class="sw" style="background:#0050ff"></i>Intracoastal or ocean<br><i class="sw"><s style="height:0;border-top:3px dashed #fff"></s></i>City limit<br><span style="color:#ff9500;font-size:15px">&#9679;</span> Control structure<br><span style="color:#666;font-size:11px">Line size comes from the official owner and drainage order fields.</span>';return w};lg.addTo(map);
 L.control.scale().addTo(map);
-function show(id){['info','disc'].forEach(k=>document.getElementById(k).style.display=k===id?'block':'none')}
+function show(id){['info','disc','route'].forEach(k=>document.getElementById(k).style.display=k===id?'block':'none')}
 function hide(id){document.getElementById(id).style.display='none'}
 show('disc');
-map.on('popupopen',()=>{hide('info');hide('disc')});
+map.on('popupopen',e=>{if(traceOn){map.closePopup();return}hide('info');hide('disc')});
+/* Path to the ocean: snap a tap to water, then follow USGS NLDI downstream main (NHDPlus V2 flowlines) */
+const NLDI='https://api.water.usgs.gov/nldi/linked-data/comid/';
+const EPA2='https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus/NHDPlus/MapServer/2/query',EPA4='https://watersgeo.epa.gov/arcgis/rest/services/NHDPlus/NHDPlus/MapServer/4/query';
+const INLETS=[['St. Marys Entrance',30.71,-81.40],['St. Johns River mouth (Mayport)',30.40,-81.39],['St. Augustine Inlet',29.91,-81.29],['Matanzas Inlet',29.715,-81.235],['Ponce de Leon Inlet',29.064,-80.912],['Port Canaveral Inlet',28.41,-80.59],['Sebastian Inlet',27.86,-80.446],['Fort Pierce Inlet',27.47,-80.29],['St. Lucie Inlet',27.166,-80.155],['Jupiter Inlet',26.944,-80.072],['Lake Worth Inlet (Palm Beach Inlet)',26.772,-80.037],['Boynton Inlet',26.545,-80.043],['Boca Raton Inlet',26.336,-80.071],['Hillsboro Inlet',26.257,-80.081],['Port Everglades Inlet',26.093,-80.109],['Bakers Haulover Inlet',25.90,-80.122],['Government Cut (Miami)',25.763,-80.13],['Gordon Pass (Naples)',26.093,-81.80],['San Carlos Bay (Caloosahatchee mouth)',26.48,-82.01],['Boca Grande Pass',26.715,-82.262],['Venice Inlet',27.113,-82.468],['Big Sarasota Pass',27.27,-82.56],['Tampa Bay entrance',27.60,-82.76],['Anclote River mouth',28.17,-82.84],['Withlacoochee River mouth',29.0,-82.76],['Suwannee River mouth',29.30,-83.17],['St. Marks River mouth',30.08,-84.18],['Apalachicola Bay (West Pass)',29.61,-85.09],['St. Andrew Bay entrance',30.12,-85.73],['East Pass (Destin)',30.39,-86.515],['Pensacola Pass',30.33,-87.31],['Perdido Pass',30.278,-87.555]];
+const svgR=L.svg({padding:.5});
+const pathG=L.layerGroup().addTo(map);
+let traceOn=false;const trBtn=document.getElementById('trace'),rt=document.getElementById('route');
+const cache=new Map();
+const km=(a,b)=>map.distance(a,b)/1000;
+const fmtD=m=>m<1000?Math.round(m)+' m ('+Math.round(m*3.281)+' ft)':(m/1000).toFixed(1)+' km ('+(m/1609).toFixed(1)+' mi)';
+function setTrace(on){traceOn=on;trBtn.classList.toggle('on',on);document.getElementById('trace2').classList.toggle('on',on);trBtn.setAttribute('aria-pressed',String(on));document.getElementById('map').style.cursor=on?'crosshair':'';
+ if(on){hide('disc');hide('info');rtShow('<h3>Path to the ocean</h3><p>Tap anywhere on the map. The tool snaps your tap to the nearest lake or canal and follows the official USGS flowlines downstream.</p>')}}
+trBtn.onclick=()=>setTrace(!traceOn);document.getElementById('trace2').onclick=()=>setTrace(!traceOn);
+function rtShow(html){rt.innerHTML='<button class="x" onclick="closeRoute()" aria-label="Close">&times;</button>'+html;rt.style.display='block'}
+window.closeRoute=()=>{rt.style.display='none';pathG.clearLayers();setTrace(false)};
+/* nearest water: lakes (polygons) and canals (lines) currently on the map */
+function snapTargets(){const out=[];[[lakes,'lake'],[cpoly,'water'],[major,'canal'],[secondary,'canal'],[small,'canal']].forEach(([g,k])=>{if(g&&map.hasLayer(g))g.eachLayer(l=>out.push([l,k]))});return out}
+function nearestOn(l,ll){const z=17,P=map.project(ll,z);let best=null;
+ const rings=(l instanceof L.Polygon)?l.getLatLngs():(l.getLatLngs&&[l.getLatLngs()]);
+ const flat=a=>Array.isArray(a[0])?a.flatMap(x=>Array.isArray(x[0])?x:[x]):[a];
+ flat(l.getLatLngs()).forEach(r=>{for(let i=0;i<r.length-(l instanceof L.Polygon?0:1);i++){const a=map.project(r[i],z),b=map.project(r[(i+1)%r.length],z);const c=L.LineUtil.closestPointOnSegment(P,a,b);const d=P.distanceTo(c);if(!best||d<best.d)best={d,p:map.unproject(c,z)}}});
+ if(best&&l instanceof L.Polygon&&inPoly(ll,l))best={d:0,p:ll,inside:true};return best}
+function inPoly(ll,l){const pt=[ll.lng,ll.lat];let ins=false;const rs=l.getLatLngs();const list=Array.isArray(rs[0][0])?rs.flat():rs;
+ list.forEach(r=>{for(let i=0,j=r.length-1;i<r.length;j=i++){const xi=r[i].lng,yi=r[i].lat,xj=r[j].lng,yj=r[j].lat;if(((yi>pt[1])!==(yj>pt[1]))&&(pt[0]<(xj-xi)*(pt[1]-yi)/(yj-yi)+xi))ins=!ins}});return ins}
+function snap(ll){const box=L.latLngBounds([ll.lat-.03,ll.lng-.033],[ll.lat+.03,ll.lng+.033]);let best=null;
+ snapTargets().forEach(([l,k])=>{if(!l.getBounds||!box.intersects(l.getBounds()))return;const r=nearestOn(l,ll);if(r&&(!best||r.d<best.d))best={...r,l,k}});
+ if(best&&best.k!=='canal'){let c=null;snapTargets().forEach(([l,k])=>{if(k!=='canal'||!l.getBounds||!box.intersects(l.getBounds()))return;const r=nearestOn(l,ll);if(r&&(!c||r.d<c.d))c={...r,l,k}});if(c&&map.distance(ll,c.p)<60&&(best.k==='water'||map.distance(ll,c.p)<25))best=c}
+ if(!best)return null;best.m=map.distance(ll,best.p);const p=best.l.feature&&best.l.feature.properties||{};best.name=(best.k==='canal'&&p.NAME?canalLabel(p):tc(p.FINALNAME||p.NAME||p.name||''))||(best.k==='lake'?'Unnamed lake or pond':best.k==='canal'?'Unnamed canal':'Water body');return best}
+async function J(u,opt){if(cache.has(u))return cache.get(u);const r=await fetch(u.split('#')[0],opt);if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();cache.set(u,j);return j}
+function structName(n){const m=/^S(\d+[A-Z]?)$/.exec(n||'');return m?'S-'+m[1]:n}
+function nearStruct(ll){let b=null;st.eachLayer(m=>{const d=map.distance(ll,m.getLatLng());if(d<150&&(!b||d<b.d))b={d,n:structName(m._sname)}});return b&&b.n}
+/* SFWMD canal network graph: edges joined end to start, direction from FLOWDIR (1 with digitized, 2 against) */
+let G=null;window.markGraphDirty=()=>{G=null};
+const nk=ll=>Math.round(ll.lng*1e4)+','+Math.round(ll.lat*1e4);
+function edgeLL(l){const a=l.getLatLngs();const f=Array.isArray(a[0])?a.flat():a;const d=l.feature.properties.FLOWDIR;return d===2?f.slice().reverse():f}
+function buildGraph(){G={out:new Map(),edges:[]};[major,secondary,small].forEach((g,ti)=>g.eachLayer(l=>{const p=l.feature.properties;if(p.FLOWDIR!==1&&p.FLOWDIR!==2)return;const ll=edgeLL(l);if(ll.length<2)return;const e={l,ll,p,tier:1+ti,id:G.edges.length};G.edges.push(e);const k=nk(ll[0]);if(!G.out.has(k))G.out.set(k,[]);G.out.get(k).push(e)}));return G}
+function nextEdges(ll){const [x,y]=nk(ll).split(',').map(Number);const r=[];for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++){const a=G.out.get((x+dx)+','+(y+dy));if(a)r.push(...a)}return r}
+function nearestEdge(ll,maxM){if(!G)buildGraph();let best=null;const box=L.latLngBounds([ll.lat-.02,ll.lng-.022],[ll.lat+.02,ll.lng+.022]);
+ G.edges.forEach(e=>{if(!e.l.getBounds().intersects(box))return;const r=nearestOn(e.l,ll);if(!r)return;const m=map.distance(ll,r.p);if(m<=maxM&&(!best||m<best.m))best={e,m,p:r.p}});return best}
+function walkSF(start,fromLL){const seen=new Set(),pts=[],names=[];let e=start.e;
+ /* begin at the snap point on the first edge */
+ let i0=0,bd=1e18;e.ll.forEach((p,i)=>{const d=map.distance(p,start.p);if(d<bd){bd=d;i0=i}});pts.push(start.p,...e.ll.slice(i0+1));
+ let idx=0;while(e&&!seen.has(e.id)&&seen.size<600){seen.add(e.id);if(e.p.NAME)names.push({n:canalLabel(e.p),i:idx});
+  const end=e.ll[e.ll.length-1];const c=nextEdges(end).filter(x=>!seen.has(x.id));if(!c.length)break;
+  c.sort((a,b)=>((b.p.NAME&&b.p.NAME===e.p.NAME)-(a.p.NAME&&a.p.NAME===e.p.NAME))||(a.tier-b.tier));e=c[0];idx=pts.length;pts.push(...e.ll.slice(1))}
+ return {pts,names,end:pts[pts.length-1]}}
+function canalLabel(p){const n=tc(p.NAME);return p.ALIAS?n+' ('+tc(p.ALIAS)+')':n}
+const RANK={'Official flowline':3,'Likely':2,'Assumed':1};
+async function nhdFrom(ll){const pos=await J(NLDI+'position?f=json&coords='+encodeURIComponent('POINT('+ll.lng.toFixed(5)+' '+ll.lat.toFixed(5)+')'));const f0=pos.features&&pos.features[0];if(!f0)throw new Error('no flowline');
+ const comid=f0.properties.comid||f0.properties.identifier;const dm=await J(NLDI+comid+'/navigation/DM/flowlines?f=json&distance=1500');const fl=dm.features||[];
+ let attrs={},wb={};try{const ids=fl.map(f=>f.properties.nhdplus_comid).join(',');const j=await J(EPA2+'#'+ids.length+ids.slice(0,40),{method:'POST',body:new URLSearchParams({where:'comid in ('+ids+')',outFields:'comid,gnis_name,tidal,wbareacomid',returnGeometry:'false',f:'json'})});(j.features||[]).forEach(x=>attrs[x.attributes.comid]=x.attributes);
+  const w=[...new Set(Object.values(attrs).map(a=>a.wbareacomid).filter(x=>x>0))];if(w.length){const k=await J(EPA4+'#'+w.join(','),{method:'POST',body:new URLSearchParams({where:'comid in ('+w.join(',')+')',outFields:'comid,gnis_name',returnGeometry:'false',f:'json'})});(k.features||[]).forEach(x=>wb[x.attributes.comid]=x.attributes.gnis_name)}}catch(e){}
+ const pts=[];fl.forEach(f=>{const g=f.geometry,c=g.type==='MultiLineString'?g.coordinates.flat():g.coordinates;const a=attrs[f.properties.nhdplus_comid]||{};c.forEach(xy=>pts.push({ll:L.latLng(xy[1],xy[0]),n:a.gnis_name||wb[a.wbareacomid]||null,tidal:a.tidal===1}))});return pts}
+function cutAtInlet(lls){for(let i=0;i<lls.length;i++){for(const n of INLETS){const r=i===lls.length-1?6000:2500;if(map.distance(lls[i],[n[1],n[2]])<r)return {i,inlet:n}}}return null}
+async function trace(tap){pathG.clearLayers();map.closePopup();rtShow('<h3>Path to the ocean</h3><p>Finding the nearest water and tracing it downstream...</p>');
+ const steps=[],hops=[];const push=(n,c)=>{if(n&&!steps.some(x=>x.n===n))steps.push({n,c})};
+ const s=snap(tap);const P=s?s.p:tap;L.marker(tap,{title:'Your tap'}).addTo(pathG);
+ if(s&&s.m>1)L.polyline([tap,s.p],{renderer:svgR,color:'#fff',weight:3,dashArray:'3 6'}).addTo(pathG);
+ L.circleMarker(P,{radius:7,color:'#000',weight:2,fillColor:'#fff',fillOpacity:1,renderer:svgR}).addTo(pathG);
+ const snapTxt=s?(s.inside?'Your tap is inside '+esc(s.name)+'.':'Snapped '+fmtD(s.m)+' to '+esc(s.name)+'.'):'No mapped lake or canal nearby, so the tap point itself was used.';
+ if(s)push(s.k==='lake'?(s.name==='Unnamed lake or pond'?'Your lake or pond':s.name+' (lake)'):s.name,s.k==='lake'?'Assumed':'Official flowline');
+ let line=[],dashed=[];
+ /* 1. SFWMD network where we have it */
+ let sf=null;if(!G)buildGraph();
+ if(G.edges.length){const ne=(s&&s.k==='canal')?nearestEdge(P,60):nearestEdge(P,s&&s.k==='water'?400:1500);
+  if(ne){const assumed=!(s&&((s.k==='canal'&&ne.m<60)||(s.k==='water'&&ne.m<150)));if(ne.m>5){dashed.push({a:P,b:ne.p,c:assumed?'Assumed':'Likely'});if(assumed)push('Assumed pipe or culvert to '+(canalLabel(ne.e.p)||'the nearest canal'),'Assumed');hops.push(assumed?'Assumed':'Likely')}
+   sf=walkSF(ne,P);line.push(...sf.pts);const ev=sf.names.slice();sf.pts.forEach((p,i)=>{const sn=nearStruct(p);if(sn)ev.push({n:sn+' control structure',i})});ev.sort((a,b)=>a.i-b.i).forEach(x=>push(x.n,'Official flowline'));hops.push('Official flowline')}}
+ /* 2. USGS NLDI downstream from where SFWMD ends, or from the snap point */
+ let start=sf?sf.end:P,cut=cutAtInlet(line);
+ if(!cut){let nh=[];try{nh=await nhdFrom(start)}catch(e){if(!line.length)return rtShow('<h3>Path to the ocean</h3><p>'+snapTxt+'</p><p class="err">The USGS routing service did not answer. Please try again in a moment.</p>')}
+  if(nh.length){if(!sf&&s&&s.k==='lake'){push('Assumed pipe or culvert to the nearest mapped flowline','Assumed');hops.push('Assumed')}
+   const gap=map.distance(start,nh[0].ll);if(gap>30)dashed.push({a:start,b:nh[0].ll,c:gap<400?'Likely':'Assumed'}),hops.push(gap<400?'Likely':'Assumed');
+   const off=line.length;line.push(...nh.map(x=>x.ll));cut=cutAtInlet(line);const lim=cut?cut.i-off+1:nh.length;let tidal=false;nh.slice(0,Math.max(0,lim)).forEach(x=>{if(x.n)push(tc(x.n),'Official flowline');const sn=nearStruct(x.ll);if(sn)push(sn+' control structure','Official flowline');});hops.push('Official flowline')}}
+ let end=line.length?line[line.length-1]:P;
+ if(cut){line=line.slice(0,cut.i+1);end=L.latLng(cut.inlet[1],cut.inlet[2]);dashed.push({a:line[line.length-1],b:end,c:'Likely'});hops.push('Likely');push(cut.inlet[0],'Likely');push(cut.inlet[2]<-81.5&&cut.inlet[1]<30.5||cut.inlet[2]<-84?'Gulf of America (Gulf of Mexico)':'Atlantic Ocean','Likely')}
+ else push('End of mapped flowline','Official flowline');
+ if(s&&s.k==='lake'&&!hops.includes('Assumed'))hops.push('Assumed');
+ /* draw */
+ if(line.length>1){L.polyline(line,{renderer:svgR,color:'#002a9e',weight:12,opacity:.35,lineCap:'round'}).addTo(pathG);L.polyline(line,{renderer:svgR,color:'#00e1ff',weight:5,className:'flowanim',lineCap:'round'}).addTo(pathG)}
+ dashed.forEach(d=>L.polyline([d.a,d.b],{renderer:svgR,color:d.c==='Assumed'?'#ff5a5a':'#ffd400',weight:4,dashArray:'6 8'}).bindTooltip(d.c==='Assumed'?'Assumed connection':'Likely connection').addTo(pathG));
+ L.circleMarker(end,{radius:8,color:'#fff',weight:3,fillColor:'#0050ff',fillOpacity:1,renderer:svgR}).addTo(pathG);
+ let dist=0;for(let i=1;i<line.length;i++)dist+=map.distance(line[i-1],line[i]);dashed.forEach(d=>dist+=map.distance(d.a,d.b));
+ const overall=hops.reduce((w,h)=>RANK[h]<RANK[w]?h:w,'Official flowline');
+ const badge=c=>'<span class="cf cf'+c.split(' ')[0]+'">'+c+'</span>';
+ rtShow('<h3>Path to the ocean '+badge(overall)+'</h3><p class="small">'+snapTxt+' Route about '+fmtD(dist)+'.</p><p class="sum">'+steps.map(x=>esc(x.n)).join(', then ')+'</p><details><summary>Steps, confidence and line key</summary><ol class="steps">'+steps.map(x=>'<li>'+esc(x.n)+' '+badge(x.c)+'</li>').join('')+'</ol>'+
+  '<p class="small"><b>Line key:</b> animated blue is an official flowline (SFWMD canal network with its flow direction, then USGS NHDPlus). Dashed red is an assumed connection, such as a lake to a canal through unmapped pipes. Dashed yellow is a likely connection, such as the last stretch to an inlet. Routes are estimates.</p></details>'+
+  '<button class="alt2" onclick="setTrace(true)">Trace another spot</button>');
+ const ph=rt.getBoundingClientRect().height,hh=document.getElementById('hdr').getBoundingClientRect().bottom;map.fitBounds(L.latLngBounds(line.concat([tap,end])).pad(.05),{paddingTopLeft:[16,hh+12],paddingBottomRight:[16,ph+36]});
+ map.attributionControl.addAttribution('Routing: SFWMD canal network, USGS NLDI and NHDPlus V2, EPA WATERS');
+ window.lastRoute={overall,steps:steps.map(x=>x.n+' ['+x.c+']'),snap:s&&{m:Math.round(s.m),k:s.k,name:s.name},sfwmdEdges:sf?sf.pts.length:0,n:line.length,inlet:cut&&cut.inlet[0]}}
+function onTraceClick(e){if(!traceOn)return;if(e.originalEvent)L.DomEvent.stop(e.originalEvent);setTimeout(()=>map.closePopup(),0);setTrace(false);trace(e.latlng)}
+map.on('click',onTraceClick);window.traceGroups=g=>g.on('click',onTraceClick);[major,secondary,small,lakes,cpoly,npb,st,city].forEach(g=>g&&g.on&&g.on('click',onTraceClick));
+
 map.attributionControl.addAttribution('A project by Steve Brandes');
 
 /* Header minimize, remembered in localStorage */
